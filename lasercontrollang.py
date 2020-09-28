@@ -27,9 +27,9 @@
 # TO ADD:
 #   1) VARIABLES: DONE
 #   2) FUNCTIONS: DONE
-#   3) LOOPS: need to figure out how we'll deal with scope
-#   4) CONDITIONALS: Might be a bit fiddly, but this is worth it.
-#   5) ARITHMETIC: Would be quite handy, but again: fiddly
+#   3) LOOPS: DONE
+#   4) CONDITIONALS: DONE
+#   5) ARITHMETIC: DONE
 # 
 # Meeting 1), 2) and 3) are the minimum for making the LASER CONTROL LANGUAGE Turing Complete.
 ##################################################################################################
@@ -112,25 +112,69 @@ class LaserControlLanguage:
             self.program += self.subroutines["loop"]
         del self.subroutines["loop"]        
 
-    def IF(self,):
-        pass
+    def IF(self, VARIABLE, operation, value, func1, func2=None):
+        # This depends on the state of the program. The states are:
+        # INTENSITY, ANGLE , ON
+        # These are the only options for the VARIABLE key.
+        # ON must have "True" or "False" as the input
+        
+        # operation, on the other hand, is a keyholder for equality and inequalities. That is:
+        # GT: >
+        # LT: <
+        # EQ: ==
+        
+        ops = {"GT": '>',
+               "LT": '<',
+               "EQ": '=='}
+        
+        com_satisfied = False
+        
+        # eval converts a string into a full program
+        # it is extremely OP, pls nerf
+        if VARIABLE == "INTENSITY":
+            if eval("self.intensity" + ops[operation] + str(value)):                
+                com_satisifed = True                
+        elif VARIABLE == "ANGLE":
+            if eval("self.angle" + ops[operation] + str(value)):
+                com_satisifed = True
+        elif VARIABLE == "ON":            
+            if operation != "EQ":
+                print("ERROR: INVALID SYNTAX")
+                return 0
+        
+            if eval("self.on" + ops[operation] + str(value)):
+                com_satisfied = True
+        else:
+            print("ERROR: INVALID COMMAND")
+
+        
+        if com_satisfied:
+            self.SUBROUTINE(func1)
+        else:
+            if func2 != None:
+                self.SUBROUTINE(func2)
+                    
+                
+# ----------------------------------------------------------------------------------------------
 
 lcl = LaserControlLanguage()
 s = LaserControlLanguage()
 
-lcl.DEF_VAR("intensity_time", 1000)
+lcl.DEF_VAR("init_intensity", 1000)
 lcl.DEF_VAR("hold_time", 100)
 lcl.DEF_VAR("turning_angle", 20)
 lcl.DEF_SUBROUTINE(s, "blast", s.INTENSITY(10000), s.TURNON(), s.HOLD(10), s.TURNOFF())
 lcl.DEF_SUBROUTINE(s, "megablast", s.INTENSITY(1000000), s.TURNON(), s.HOLD(10), s.TURNOFF())
 
-lcl.INTENSITY(lcl.VAR("intensity_time"))
-# lcl.LOOP(s, 10, s.TURNON(), s.TURNOFF())
+lcl.INTENSITY(lcl.VAR("init_intensity"))
+
+# lcl.LOOP(s, 10, s.TURNON(), s.HOLD(5), s.TURNOFF())
+
 lcl.TURNON()
-lcl.HOLD(lcl.VAR("intensity_time"))
+lcl.HOLD(lcl.VAR("init_intensity"))
 lcl.TURNOFF()
 
-lcl.SUBROUTINE("blast")
+lcl.IF("ON", "EQ", "True", "megablast", "blast")
 
 lcl.TURN(lcl.VAR("turning_angle"), 2)
 lcl.SUBROUTINE("megablast")
@@ -142,4 +186,7 @@ lcl.SHIFT(1000,0)
 
 lcl.TURNOFF()
 
-print(lcl.program)
+# print(lcl.program) # this will need to be parsed
+
+
+
