@@ -5,6 +5,7 @@
 
 
 import pygame as pg
+import lasercontrollang as lcl
 
 class PixelArray:
     # the full array
@@ -23,30 +24,35 @@ class PixelArray:
         self.Pixels = [self.Pixel(i,j) for i in range(X) for j in range(Y)]
         self.running = False
     
-
     #-------------------------------------------------------------------------
-    
-    def pixelframe(self):
-        #converts the pixel frame defined above into a full frame
-        self.screen = pg.display.set_mode([self.X, self.Y])
-
+    # THE MAIN FUNCTION HERE
     def play(self, mode):
+        # "plasma" is the first game mode.
+        # Depending on how this goes, it'd be nice to introduce other game modes too.
+        # "fluid", "alloy" or, dare I say, "polymer"
+        
         pg.init() # initializes pygame
-        game.pixelframe()
-        pg.display.set_caption(mode)
+        
+        if mode == "plasma":
+            pg.display.set_caption("Laser Control Programming")    
+            l = lcl.LaserControlLanguage() # the main programming language bit
+            s = lcl.LaserControlLanguage() # this will be used as a subspace for functions            
+
+        self.screen = pg.display.set_mode([self.X, self.Y])
         
         clock = pg.time.Clock() # define game clock
-        
         running = True
         while running:
             for event in pg.event.get():
                 # events are objects corresponding to what the user does on screen
                 # print the events to see exactly what's going on there, it's pretty cool m8
+                # print(event)
                 if event.type == pg.QUIT:
                     running = False
+                    
             pg.display.update() # could use flip if we're working with pixels?
-            clock.tick(60) # controls FPS
-            
+            clock.tick(30) # controls FPS
+                   
         pg.quit()
                     
 
