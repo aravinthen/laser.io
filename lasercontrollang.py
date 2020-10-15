@@ -168,7 +168,7 @@ lcl.DEF_SUBROUTINE(s, "megablast", s.INTENSITY(1000000), s.TURNON(), s.HOLD(10),
 
 lcl.INTENSITY(lcl.VAR("init_intensity"))
 
-# lcl.LOOP(s, 10, s.TURNON(), s.HOLD(5), s.TURNOFF())
+# lcl.LOOP(s, 10, s.TURNON(), s.TURN(20, 5), s.TURNOFF())
 
 lcl.TURNON()
 lcl.HOLD(lcl.VAR("init_intensity"))
@@ -186,7 +186,4 @@ lcl.SHIFT(1000,0)
 
 lcl.TURNOFF()
 
-# print(lcl.program) # this will need to be parsed
-
-
-
+print(lcl.program) # this will need to be parsed
