@@ -3,7 +3,7 @@ This document outlines the structure and design of the /LaserGame/ project.
 
 ** Design
    The game is designed based on a hierarchy. The full game is actually a class that encompasses
-   three subclasses: `Menu`, `Interface` and `LaserScript`. Each of the subclasses has direct access
+   three subclasses: ``Menu``, ``Interface`` and ``LaserScript``. Each of the subclasses has direct access
    to the game class. 
    The game class itself is rudimentary and serves two purposes:
    - Calling the subclasses, in which the bulk of the computing is done.
@@ -19,11 +19,11 @@ This document outlines the structure and design of the /LaserGame/ project.
 *** LaserGame
     LaserGame is the the class that ties in all of the subclasses. It is equipped with the following
     methods:
-- `Draw()`: Carries out *all* the drawing procedures by calling said procedures from their
+- ``Draw()``: Carries out *all* the drawing procedures by calling said procedures from their
   subclasses. Note that the methods that actually do the drawing are local to their subclass: no
   actual drawing is carred in in this method.
-- `Update()`: Updates the state of the subclass
-- `Input()`: Allows the `LaserScript` class to communicate with the `Interface` class. LaserScript
+- ``Update()``: Updates the state of the subclass
+- ``Input()``: Allows the `LaserScript` class to communicate with the `Interface` class. LaserScript
   is intended to be a simple but complete programming language, so this part will likely by pretty
   extensive.
 
@@ -36,11 +36,11 @@ This document outlines the structure and design of the /LaserGame/ project.
     In effect, `Menu` is itself broken down into submodes.
 
     Each of the functionalities have a method by which they are called. The methods are passed by an
-    overall control: `UpdateMenu()`, which is itself called in the `Update()` method attached to the
-    full `LaserGame` object.
+    overall control: ``UpdateMenu()``, which is itself called in the ``Update()`` method attached to the
+    full ``LaserGame`` object.
 
-    Additionally, `Menu` has a method by which graphics are drawn on to the screen,
-    `DrawMenu()`. This method accesses the full game directly using the `self.game` variable that is
+    Additionally, ``Menu`` has a method by which graphics are drawn on to the screen,
+    ``DrawMenu()``. This method accesses the full game directly using the ``self.game`` variable that is
     required by all classes upon initialisation.    
     
     
