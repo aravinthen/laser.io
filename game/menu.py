@@ -158,8 +158,8 @@ class Menu:
             # create a text surface object on which text is drawn on it.
             
             # GAME TITLE DEFINED BELOW (obviously subject to change)
-            titlefont = pygame.font.Font('freesansbold.ttf', 40) # font
-            title = titlefont.render('HETSYS LASER GAME', True, WHITE, BLUE) 
+            titlefont = pygame.font.Font('freesansbold.ttf', 50) # font
+            title = titlefont.render('laser.io', True, BLUE, WHITE) 
             titleRect = title.get_rect()                              # Initialise the text box
             titleRect.center = (self.game.sx//2, (0.30)*self.game.sy) # rectangle position
 
