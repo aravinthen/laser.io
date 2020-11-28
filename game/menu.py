@@ -48,7 +48,8 @@ class Menu:
         self.minor_width = 100
         self.minor_height = 50
         
-        # MENU BUTTONS----------------------------------------------------------------------------
+        # MENU DATA -------------------------------------------------------------------------------
+        # BUTTONS ---------------------------------------------------------------------------------
         # active_{button}: whether the button is active or not
         # {button}_pos:    the position of the button
         #                  these are all located in the __init__ object to ensure that any
@@ -65,12 +66,35 @@ class Menu:
         self.active_cred = 0
         self.cred_pos = (self.game.sx/2, (0.80)*self.game.sy)
         
-        # INSTRUCTION BUTTONS---------------------------------------------------------------------
+        # INSTRUCTION DATA ------------------------------------------------------------------------
+        self.num_pages = 3 # The number of instruction pages.b
+                           # Starts at 1, no zero-based numbering
+                           # You have to update this variable if you add more pages!
+                           
+        self.inst_page = 1 # This controls the page display for the instruction slide.
+                           # It has to be set to zero whenever instructions are exited
+        # BUTTONS ---------------------------------------------------------------------------------                           
+        # Next page
+        self.active_inext = 0
+        self.inext_pos = ((0.90)*self.game.sx, (0.5)*self.game.sy)
+        # Previous Page
+        self.active_iprev = 0
+        self.iprev_pos = ((0.10)*self.game.sx, (0.5)*self.game.sy)
+        # Back button.
+        self.active_iback = 0
+        self.iback_pos = ((0.90)*self.game.sx, (0.90)*self.game.sy)
 
-        # HIGH SCORES BUTTONS---------------------------------------------------------------------
+        # HIGH SCORES DATA ------------------------------------------------------------------------
+        # h prefix: the back value reserved for the highscore submode
+        # BUTTONS ---------------------------------------------------------------------------------
+        # Back button
+        self.active_hback = 0
+        self.hback_pos = ((0.90)*self.game.sx, (0.90)*self.game.sy)
         
-        # CREDIT BUTTONS--------------------------------------------------------------------------
+        # CREDIT DATA -----------------------------------------------------------------------------
         # c prefix: the back value reserved for the credits submode
+        # BUTTONS ---------------------------------------------------------------------------------
+        # Back button
         self.active_cback = 0
         self.cback_pos = ((0.90)*self.game.sx, (0.90)*self.game.sy)
         
@@ -126,13 +150,59 @@ class Menu:
                 if self.active_play == 1:                    
                     print("NOT YET IMPLEMENTED!")
                 if self.active_inst == 1:                    
-                    print("NOT YET IMPLEMENTED!")
+                    self.menumode = 'instructions'
                 if self.active_high == 1:                    
-                    print("NOT YET IMPLEMENTED!")            
+                    self.menumode = 'highscore'
                 if self.active_cred == 1:                    
                     self.menumode = 'credits'
                     
         # --------------------------------------  DEFAULT MENU MODE  --------------------------------------------
+
+
+        # -------------------------------------     BACK BUTTONS     --------------------------------------------
+
+        if self.menumode == 'instructions':
+            # the back button
+            if (
+                    ((self.iback_pos[0]-self.minor_width//2 < mx) and (mx < self.iback_pos[0]+self.minor_width//2)) and
+                    ((self.iback_pos[1]-self.minor_height//2 < my) and (my < self.iback_pos[1]+self.minor_height//2))
+               ):
+                self.active_iback = 1                                
+            else:
+                self.active_iback = 0
+                
+            # the next page button
+            if (
+                    ((self.inext_pos[0]-self.minor_width//2 < mx) and (mx < self.inext_pos[0]+self.minor_width//2)) and
+                    ((self.inext_pos[1]-self.minor_height//2 < my) and (my < self.inext_pos[1]+self.minor_height//2))
+               ):
+                self.active_inext = 1                                
+            else:
+                self.active_inext = 0
+
+            # the previous page button
+            if (
+                    ((self.iprev_pos[0]-self.minor_width//2 < mx) and (mx < self.iprev_pos[0]+self.minor_width//2)) and
+                    ((self.iprev_pos[1]-self.minor_height//2 < my) and (my < self.iprev_pos[1]+self.minor_height//2))
+               ):
+                self.active_iprev = 1                                
+            else:
+                self.active_iprev = 0
+
+            # All the available click options:            
+            if click[0] == 1:
+                if self.active_iback == 1:
+                    self.menumode = 'default'
+                    self.inst_page = 1
+                if self.active_inext == 1 and self.inst_page < self.num_pages:
+                    # the inequality makes sure that the next page functionality is disabled
+                    self.inst_page += 1
+                    print(self.inst_page)
+                if self.active_iprev == 1 and self.inst_page > 1:
+                    self.inst_page -= 1
+                    print(self.inst_page)
+
+                    
         if self.menumode == 'credits':
             if (
                     ((self.cback_pos[0]-self.minor_width//2 < mx) and (mx < self.cback_pos[0]+self.minor_width//2)) and
@@ -145,6 +215,20 @@ class Menu:
                 
             if click[0] == 1:
                 if self.active_cback == 1:
+                    self.menumode = 'default'
+
+        if self.menumode == 'highscore':
+            if (
+                    ((self.hback_pos[0]-self.minor_width//2 < mx) and (mx < self.hback_pos[0]+self.minor_width//2)) and
+                    ((self.hback_pos[1]-self.minor_height//2 < my) and (my < self.hback_pos[1]+self.minor_height//2))
+               ):
+                self.active_hback = 1                                
+            else:
+                self.active_hback = 0
+
+                
+            if click[0] == 1:
+                if self.active_hback == 1:
                     self.menumode = 'default'
                     
                 
@@ -220,14 +304,88 @@ class Menu:
 
         # Draw the instructions screen.
         if self.menumode == "instructions":
-            pass
+            # wipe the screen
+            self.game.display.fill(WHITE)
+            #------------------------------------------------------------------------------------------
+            # TUTORIAL TEXT
+            # NOTE: If you add a new page, MAKE SURE TO CHANGE THE self.num_pages variable to account for it!
+            if self.inst_page == 1:
+                pass
+            if self.inst_page == 2:
+                pass
+            if self.inst_page == 3:
+                pass
+            #------------------------------------------------------------------------------------------
+            # BUTTONS            
+            # the BACK button
+            ibackfont = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_iback == 1:
+                iback = ibackfont.render('BACK', True, WHITE, BLUE)
+            else:
+                iback = ibackfont.render('BACK', True, WHITE, LBLUE)
+                
+            ibackRect = iback.get_rect()
+            ibackRect.width = self.major_width
+            ibackRect.height = self.major_height
+            ibackRect.center = self.iback_pos
+
+            # the NEXT button
+            if self.inst_page < self.num_pages:
+                inextfont = pygame.font.Font('freesansbold.ttf', 30) # font
+                if self.active_inext == 1:
+                    inext = inextfont.render('NEXT', True, WHITE, BLUE)
+                else:
+                    inext = inextfont.render('NEXT', True, WHITE, LBLUE)
+                
+                inextRect = inext.get_rect()
+                inextRect.width = self.major_width
+                inextRect.height = self.major_height
+                inextRect.center = self.inext_pos
+
+                # need to draw this separately, as it's dependent on self.inst_page 
+                self.game.display.blit(inext, inextRect)            
+
+            # the PREV button
+            if self.inst_page > 1:
+                iprevfont = pygame.font.Font('freesansbold.ttf', 30) # font                
+                if self.active_iprev == 1:
+                    iprev = iprevfont.render('PREVIOUS', True, WHITE, BLUE)
+                else:
+                    iprev = iprevfont.render('PREVIOUS', True, WHITE, LBLUE)
+                
+                iprevRect = iprev.get_rect()
+                iprevRect.width = self.major_width
+                iprevRect.height = self.major_height
+                iprevRect.center = self.iprev_pos
+                
+                # need to draw this separately, as it's dependent on self.inst_page    
+                self.game.display.blit(iprev, iprevRect) 
+                
+            # Drawing
+            self.game.display.blit(iback, ibackRect)
         
         # Draw the highscore screen
         if self.menumode == "highscore":
-            pass
+            # wipe the screen
+            self.game.display.fill(WHITE)
+            # BUTTONS
+            # the BACK button
+            hbackfont = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_hback == 1:
+                hback = hbackfont.render('BACK', True, WHITE, BLUE)
+            else:
+                hback = hbackfont.render('BACK', True, WHITE, LBLUE)
+                
+            hbackRect = hback.get_rect()
+            hbackRect.width = self.major_width
+            hbackRect.height = self.major_height
+            hbackRect.center = self.hback_pos
+
+            self.game.display.blit(hback, hbackRect)
 
         # Draw the credits screen
         if self.menumode == "credits":
+            # wipe the screen
             self.game.display.fill(WHITE)
 
             # CREDITS
