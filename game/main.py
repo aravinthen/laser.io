@@ -91,7 +91,7 @@ class LaserGame:
                            # It is updated on the fly.
                            # Possible modes:  1. menu
                            #                  2. interface
-                           
+
         pg.init() # initialize pygame
         finished = False
         while not finished:
@@ -100,6 +100,7 @@ class LaserGame:
                     print("Thank you for playing!")
                     finished = True
 
+            
             self.Draw()   # fill in the screen
             self.Update() # all of the data updates are wrapped up in this function.
 
@@ -120,4 +121,4 @@ class LaserGame:
 #     repeat
 
 
-LaserGame(1200, 800,60)
+LaserGame(800, 600, 30)

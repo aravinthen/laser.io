@@ -8,6 +8,7 @@ from pygame.sprite import Sprite
 from pygame.rect import Rect
 import math as m
 import os
+import time
 
 # Colours
 BLUE = (106, 160, 184)
@@ -37,7 +38,11 @@ class Menu:
         #          d) instructions: 
         #          e) credits:      the credits screen
 
-
+        # sleep_time: used to make space between clicks
+        # I admit that this isn't the best solution, as the entire program is halted.
+        # However, the use of this mechanism is constrained to the menu and the interface.
+        self.sleep_time = 0.085
+        
         # button specifications: the size and shape of buttons
         # major: used for large, significant buttons (like Play button)
         # minor: used for basic buttons (like the Credits button)
@@ -149,13 +154,17 @@ class Menu:
             if click[0] == 1:
                 if self.active_play == 1:                    
                     print("NOT YET IMPLEMENTED!")
+                    time.sleep(self.sleep_time)
                 if self.active_inst == 1:                    
                     self.menumode = 'instructions'
+                    time.sleep(self.sleep_time)
                 if self.active_high == 1:                    
                     self.menumode = 'highscore'
+                    time.sleep(self.sleep_time)
                 if self.active_cred == 1:                    
                     self.menumode = 'credits'
-                    
+                    time.sleep(self.sleep_time)
+                                
         # --------------------------------------  DEFAULT MENU MODE  --------------------------------------------
 
 
@@ -190,17 +199,19 @@ class Menu:
                 self.active_iprev = 0
 
             # All the available click options:            
-            if click[0] == 1:
+            if click[0] == 1:                
                 if self.active_iback == 1:
                     self.menumode = 'default'
                     self.inst_page = 1
+                    time.sleep(self.sleep_time)
                 if self.active_inext == 1 and self.inst_page < self.num_pages:
                     # the inequality makes sure that the next page functionality is disabled
+                    # The click pause duration is TWICE as much as the standard.
                     self.inst_page += 1
-                    print(self.inst_page)
+                    time.sleep(2*self.sleep_time)
                 if self.active_iprev == 1 and self.inst_page > 1:
                     self.inst_page -= 1
-                    print(self.inst_page)
+                    time.sleep(2*self.sleep_time)
 
                     
         if self.menumode == 'credits':
@@ -216,6 +227,7 @@ class Menu:
             if click[0] == 1:
                 if self.active_cback == 1:
                     self.menumode = 'default'
+                    time.sleep(self.sleep_time)
 
         if self.menumode == 'highscore':
             if (
@@ -230,7 +242,7 @@ class Menu:
             if click[0] == 1:
                 if self.active_hback == 1:
                     self.menumode = 'default'
-                    
+                    time.sleep(self.sleep_time)                    
                 
     def DrawMenu(self,):
         # The default menu screen.

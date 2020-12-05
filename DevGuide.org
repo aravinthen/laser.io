@@ -2,9 +2,9 @@
 This document outlines the structure and design of the /LaserGame/ project.
 
 ** Design
-   The game is designed based on a hierarchy. The full game is actually a class that encompasses
-   three subclasses: ``Menu``, ``Interface`` and ``LaserScript``. Each of the subclasses has direct access
-   to the game class. 
+   The game is designed in a tree format. The full game is actually a class that encompasses three subclasses: ``Menu``, ``Interface`` and ``LaserScript``. 
+   
+   Each of the subclasses has direct access to the game class. 
    The game class itself is rudimentary and serves two purposes:
    - Calling the subclasses, in which the bulk of the computing is done.
    - Allowing the subclasses to communicate with each other. 
