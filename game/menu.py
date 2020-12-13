@@ -16,6 +16,11 @@ LBLUE = (0, 134, 143)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+GREEN = (128, 255, 0)
+YELLOW = (255, 255, 0)
+ORANGE = (255, 128, 0)
+RED = (255, 0, 0)
+
 class Menu:
     """
     This will be used as a loop point. When the player finishes playing, the program will 
@@ -70,6 +75,34 @@ class Menu:
         # credits
         self.active_cred = 0
         self.cred_pos = (self.game.sx/2, (0.80)*self.game.sy)
+
+        # LEVEL SELECT DATA -----------------------------------------------------------------------
+        # Back button
+        self.active_lback = 0
+        self.lback_pos = ((0.90)*self.game.sx, (0.50)*self.game.sy)
+
+        # information slide data
+        # When mouse hovers over a level button, a description of the level will be displayed
+        self.slide_coords = (0.23*self.game.sx,
+                             0.01*self.game.sy,
+                             0.58*self.game.sx,
+                             0.95*self.game.sy)
+        
+        # level select data
+        self.active_lvl1 = 0
+        self.lvl1_pos = ((0.10)*self.game.sx, (0.10)*self.game.sy)
+
+        self.active_lvl2 = 0
+        self.lvl2_pos = ((0.10)*self.game.sx, (0.30)*self.game.sy)
+
+        self.active_lvl3 = 0
+        self.lvl3_pos = ((0.10)*self.game.sx, (0.50)*self.game.sy)
+
+        self.active_lvl4 = 0
+        self.lvl4_pos = ((0.10)*self.game.sx, (0.70)*self.game.sy)
+
+        self.active_lvl5 = 0
+        self.lvl5_pos = ((0.10)*self.game.sx, (0.90)*self.game.sy)
         
         # INSTRUCTION DATA ------------------------------------------------------------------------
         self.num_pages = 3 # The number of instruction pages.b
@@ -153,7 +186,7 @@ class Menu:
             # switching from one submode to another
             if click[0] == 1:
                 if self.active_play == 1:                    
-                    print("NOT YET IMPLEMENTED!")
+                    self.menumode = 'level'
                     time.sleep(self.sleep_time)
                 if self.active_inst == 1:                    
                     self.menumode = 'instructions'
@@ -169,6 +202,78 @@ class Menu:
 
 
         # -------------------------------------     BACK BUTTONS     --------------------------------------------
+        if self.menumode == 'level':
+            # the back button
+            if (
+                    ((self.lback_pos[0]-self.minor_width//2 < mx) and (mx < self.lback_pos[0]+self.minor_width//2)) and
+                    ((self.lback_pos[1]-self.minor_height//2 < my) and (my < self.lback_pos[1]+self.minor_height//2))
+               ):
+                self.active_lback = 1                                
+            else:
+                self.active_lback = 0
+
+
+            # Level 1
+            if (
+                    ((self.lvl1_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl1_pos[0]+self.minor_width//2)) and
+                    ((self.lvl1_pos[1]-self.minor_height//2 < my) and (my < self.lvl1_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl1 = 1                                
+            else:
+                self.active_lvl1 = 0
+
+            # Level 2
+            if (
+                    ((self.lvl2_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl2_pos[0]+self.minor_width//2)) and
+                    ((self.lvl2_pos[1]-self.minor_height//2 < my) and (my < self.lvl2_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl2 = 1                                
+            else:
+                self.active_lvl2 = 0
+            
+            # Level 3
+            if (
+                    ((self.lvl3_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl3_pos[0]+self.minor_width//2)) and
+                    ((self.lvl3_pos[1]-self.minor_height//2 < my) and (my < self.lvl3_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl3 = 1                                
+            else:
+                self.active_lvl3 = 0
+
+            # Level 4
+            if (
+                    ((self.lvl4_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl4_pos[0]+self.minor_width//2)) and
+                    ((self.lvl4_pos[1]-self.minor_height//2 < my) and (my < self.lvl4_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl4 = 1                                
+            else:
+                self.active_lvl4 = 0
+
+            if (
+                    ((self.lvl5_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl5_pos[0]+self.minor_width//2)) and
+                    ((self.lvl5_pos[1]-self.minor_height//2 < my) and (my < self.lvl5_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl5 = 1                                
+            else:
+                self.active_lvl5 = 0                
+
+            if click[0] == 1:
+                if self.active_lback == 1:
+                    self.menumode = 'default'
+                    time.sleep(self.sleep_time)
+                    
+                if self.active_lvl1 == 1:
+                    # A variable must be set to save the user's choice here.
+                    print("SQUARE")
+                if self.active_lvl2 == 1:
+                    print("TBD")
+                if self.active_lvl3 == 1:                    
+                    print("TBD")
+                if self.active_lvl4 == 1:                    
+                    print("TBD")
+                if self.active_lvl5 == 1:                    
+                    print("TBD")
+            # -----------------------------------     LEVELS   --------------------------------------------------
 
         if self.menumode == 'instructions':
             # the back button
@@ -312,7 +417,95 @@ class Menu:
             
         # Draw the level select screen.
         if self.menumode == "level":
-            pass
+            self.game.display.fill(WHITE)
+            
+            # the BACK button
+            lbackfont = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lback == 1:
+                lback = lbackfont.render('BACK', True, WHITE, BLUE)
+            else:
+                lback = lbackfont.render('BACK', True, WHITE, LBLUE)
+                
+            lbackRect = lback.get_rect()
+            lbackRect.width = self.major_width
+            lbackRect.height = self.major_height
+            lbackRect.center = self.lback_pos
+
+            # the LEVEL buttons
+            # Lvl1
+            lvl1font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl1 == 1:
+                lvl1 = lvl1font.render('LEVEL 1', True, WHITE, BLUE)
+            else:
+                lvl1 = lvl1font.render('LEVEL 1', True, WHITE, LBLUE)                
+            lvl1Rect = lvl1.get_rect()
+            lvl1Rect.width = self.major_width
+            lvl1Rect.height = self.major_height
+            lvl1Rect.center = self.lvl1_pos
+
+            # Lvl2
+            lvl2font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl2 == 1:
+                lvl2 = lvl2font.render('LEVEL 2', True, WHITE, BLUE)
+            else:
+                lvl2 = lbackfont.render('LEVEL 2', True, WHITE, LBLUE)                
+            lvl2Rect = lvl2.get_rect()
+            lvl2Rect.width = self.major_width
+            lvl2Rect.height = self.major_height
+            lvl2Rect.center = self.lvl2_pos
+
+            # Lvl3
+            lvl3font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl3 == 1:
+                lvl3 = lvl3font.render('LEVEL 3', True, WHITE, BLUE)
+            else:
+                lvl3 = lvl3font.render('LEVEL 3', True, WHITE, LBLUE)                
+            lvl3Rect = lvl3.get_rect()
+            lvl3Rect.width = self.major_width
+            lvl3Rect.height = self.major_height
+            lvl3Rect.center = self.lvl3_pos
+
+            # Lvl4
+            lvl4font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl4 == 1:
+                lvl4 = lvl4font.render('LEVEL 4', True, WHITE, BLUE)
+            else:
+                lvl4 = lvl4font.render('LEVEL 4', True, WHITE, LBLUE)                
+            lvl4Rect = lvl4.get_rect()
+            lvl4Rect.width = self.major_width
+            lvl4Rect.height = self.major_height
+            lvl4Rect.center = self.lvl4_pos
+
+            # Lvl5
+            lvl5font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl5 == 1:
+                lvl5 = lvl5font.render('LEVEL 5', True, WHITE, BLUE)                              
+            else:
+                lvl5 = lvl5font.render('LEVEL 5', True, WHITE, LBLUE)                
+            lvl5Rect = lvl5.get_rect()
+            lvl5Rect.width = self.major_width
+            lvl5Rect.height = self.major_height
+            lvl5Rect.center = self.lvl5_pos
+            
+            # drawing buttons
+            self.game.display.blit(lback, lbackRect)
+            self.game.display.blit(lvl1, lvl1Rect)
+            self.game.display.blit(lvl2, lvl2Rect)
+            self.game.display.blit(lvl3, lvl3Rect)
+            self.game.display.blit(lvl4, lvl4Rect)
+            self.game.display.blit(lvl5, lvl5Rect)
+
+            # level information slides:
+            if self.active_lvl1 == 1:
+                pg.draw.rect(self.game.display, BLUE, self.slide_coords)
+            if self.active_lvl2 == 1:
+                pg.draw.rect(self.game.display, GREEN, self.slide_coords)
+            if self.active_lvl3 == 1:
+                pg.draw.rect(self.game.display, ORANGE, self.slide_coords)
+            if self.active_lvl4 == 1:
+                pg.draw.rect(self.game.display, RED, self.slide_coords)
+            if self.active_lvl5 == 1:
+                pg.draw.rect(self.game.display, BLACK, self.slide_coords)
 
         # Draw the instructions screen.
         if self.menumode == "instructions":

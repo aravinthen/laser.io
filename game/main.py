@@ -32,7 +32,8 @@ class LaserGame:
         Takes everything from the above and draws it onto the relevant screen.
         """
         if self.mode == "menu":
-            self.menu.DrawMenu()            
+            self.menu.DrawMenu()
+            
         if self.mode == "interface":
             pass
 
@@ -44,17 +45,8 @@ class LaserGame:
             # All methods relating to updating the menu will be called here.
             self.menu.UpdateMenu()
             self.menu.DrawMenu()
-
-        if self.mode == "credits":
-            pass
         
         pg.display.update()        
-
-    def Input(self,):
-        """ 
-        Ties in the interface with the laser animations.
-        """
-        pass
     
     def __init__(self, sizex, sizey, framerate):
         """
@@ -90,7 +82,7 @@ class LaserGame:
         self.mode = "menu" # This controls the game mode that the player is currently in.
                            # It is updated on the fly.
                            # Possible modes:  1. menu
-                           #                  2. interface
+                           #                  2. interface        
 
         pg.init() # initialize pygame
         finished = False
