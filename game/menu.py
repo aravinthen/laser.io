@@ -15,7 +15,6 @@ BLUE = (106, 160, 184)
 LBLUE = (0, 134, 143)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-
 GREEN = (128, 255, 0)
 YELLOW = (255, 255, 0)
 ORANGE = (255, 128, 0)
@@ -29,9 +28,7 @@ class Menu:
     high scores.
     The STARTING SHAPE and GOAL SHAPE will be determined here.
     """
-    def __init__(self, state, game):
-        # state can be "active" or "inactive" depending on use.
-        self.state = state
+    def __init__(self, game):
         self.game = game          # this is used to interface with the full game object
         
         self.menumode = "default" # These are the submodes associated with the menu object.
@@ -46,7 +43,7 @@ class Menu:
         # sleep_time: used to make space between clicks
         # I admit that this isn't the best solution, as the entire program is halted.
         # However, the use of this mechanism is constrained to the menu and the interface.
-        self.sleep_time = 0.085
+        self.sleep_time = 0.05
         
         # button specifications: the size and shape of buttons
         # major: used for large, significant buttons (like Play button)
@@ -264,7 +261,9 @@ class Menu:
                     
                 if self.active_lvl1 == 1:
                     # A variable must be set to save the user's choice here.
-                    print("SQUARE")
+                    self.level = 'square'
+                    self.game.mode = 'interface'
+                    
                 if self.active_lvl2 == 1:
                     print("TBD")
                 if self.active_lvl3 == 1:                    

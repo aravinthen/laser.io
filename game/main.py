@@ -12,7 +12,7 @@ import os
 from menu import Menu
 from lscript import LaserScript
 from interface import Interface
-from lmechanics import Laser, Materials
+from graphics import Graphics
 
 class LaserGame:
 #-------------------------------------------------------------------------------------------------
@@ -45,7 +45,15 @@ class LaserGame:
             # All methods relating to updating the menu will be called here.
             self.menu.UpdateMenu()
             self.menu.DrawMenu()
-        
+            
+        if self.mode == "interface":
+            self.interface.UpdateInterface()
+            self.interface.DrawInterface()
+
+        if self.mode == "graphics":
+            self.graphics.UpdateGraphics()
+            self.graphics.DrawGraphics()
+            
         pg.display.update()        
     
     def __init__(self, sizex, sizey, framerate):
@@ -67,7 +75,7 @@ class LaserGame:
         # If you want to draw, draw to the display.
         self.display = pg.display.set_mode((sizex,sizey))
         # Might want to change this later on.
-        pg.display.set_caption("HETSYS - LASER GAME")
+        pg.display.set_caption("laser.io")
 
         # The objects required to play the game are initialised all together.
         # the second "self" variable is used to access the full LaserGame object from
@@ -75,15 +83,28 @@ class LaserGame:
         # REMEMBER! LOWER CASE: the INITIALISED object
         #           UPPER CASE: the CLASS object
         # In most cases, you should be calling the initialised object.
-        self.ls = LaserScript("inactive", self)
-        self.menu = Menu("active", self)
-        self.interface = Interface("inactive", self)
+                
+        # menu screen
+        self.menu = Menu(self)
+        self.level = None # this is set by the user within the menu.
+
+        # these are the components of the game itself
+        # interface:  the section where the player controls the game: input
+        # graphics:   the output of the interface.
+        # ls:         Contains the laserscript language as well as a parser to
+        #             control the output
+        self.ls = LaserScript(self) # key module, a bridge between interface
+                                                # and the output.
+        self.interface = Interface(self, self.ls)
+        self.graphics = Graphics(self, self.ls)
 
         self.mode = "menu" # This controls the game mode that the player is currently in.
                            # It is updated on the fly.
                            # Possible modes:  1. menu
-                           #                  2. interface        
-
+                           #                  2. interface
+                           #                  3. graphics
+                           
+        
         pg.init() # initialize pygame
         finished = False
         while not finished:
@@ -91,8 +112,6 @@ class LaserGame:
                 if event.type == pg.QUIT:
                     print("Thank you for playing!")
                     finished = True
-
-            
             self.Draw()   # fill in the screen
             self.Update() # all of the data updates are wrapped up in this function.
 
@@ -104,13 +123,11 @@ class LaserGame:
 #--------------------------------------------------------------------------------------------
 
 # The basic control flow of a game is:
+# Initialise the Game object.
+#   While game is running:
+#     Draw the current scene.
+#     Update variables.
+#     Check the new inputs
+#      Repeat
 
-# Initialise the PyGame object.
-# While game is running:
-#    Draw the current scene.
-#    Update variables.
-#    Check the new inputs
-#     repeat
-
-
-LaserGame(800, 600, 30)
+LaserGame(800, 600, 100)
