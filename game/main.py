@@ -10,7 +10,6 @@ import os
 
 # program-specific subclasses
 from menu import Menu
-from lscript import LaserScript
 from interface import Interface
 from graphics import Graphics
 
@@ -35,7 +34,11 @@ class LaserGame:
             self.menu.DrawMenu()
             
         if self.mode == "interface":
-            pass
+            self.interface.DrawInterface()
+
+        if self.mode == "graphics":
+            self.graphics.DrawGraphics()
+
 
     def Update(self,):
         """
@@ -44,15 +47,13 @@ class LaserGame:
         if self.mode == "menu":
             # All methods relating to updating the menu will be called here.
             self.menu.UpdateMenu()
-            self.menu.DrawMenu()
             
         if self.mode == "interface":
             self.interface.UpdateInterface()
-            self.interface.DrawInterface()
 
         if self.mode == "graphics":
             self.graphics.UpdateGraphics()
-            self.graphics.DrawGraphics()
+
             
         pg.display.update()        
     
@@ -93,10 +94,11 @@ class LaserGame:
         # graphics:   the output of the interface.
         # ls:         Contains the laserscript language as well as a parser to
         #             control the output
-        self.ls = LaserScript(self) # key module, a bridge between interface
+        
+#        self.ls = LaserScript(self) # key module, a bridge between interface
                                                 # and the output.
-        self.interface = Interface(self, self.ls)
-        self.graphics = Graphics(self, self.ls)
+        self.interface = Interface(self,)
+        self.graphics = Graphics(self,)
 
         self.mode = "menu" # This controls the game mode that the player is currently in.
                            # It is updated on the fly.
@@ -111,6 +113,8 @@ class LaserGame:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     print("Thank you for playing!")
+                    print("Still to do: 1. Scale fonts with size.")
+                    print("             2. ...")
                     finished = True
             self.Draw()   # fill in the screen
             self.Update() # all of the data updates are wrapped up in this function.
@@ -130,4 +134,4 @@ class LaserGame:
 #     Check the new inputs
 #      Repeat
 
-LaserGame(800, 600, 100)
+LaserGame(800, 600, 30)

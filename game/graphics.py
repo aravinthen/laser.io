@@ -82,12 +82,8 @@ class Graphics:
 
 # -------------------------------------------------------------------------------------------------
 
-    def __init__(self, game, ls):
+    def __init__(self, game):
         self.game = game   # allows access to the whole game object
-        self.ls = ls       # allows access to laserscript features
-                           # the main features needed in this section is the parser,
-                           # which will convert the instructions specified in the
-                           # interface into animations.
 
     def scoring(self,):
         """
