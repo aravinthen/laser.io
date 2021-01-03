@@ -89,7 +89,7 @@ class Laser:
         self.on = True
         self.position = 250
         self.angle = 90
-        self.intensity = 0        
+        self.intensity = 5
 
         # rotation matrix, dependent on self.angle               
         # drawing
@@ -142,8 +142,12 @@ class Laser:
         """
         self.angle+=1
         self.position+=1
+        self.intensity+=1
         if (self.angle + self.position) % 48 == 0:
             self.on = not self.on
+
+        if self.intensity > 100:
+            self.intensity = 100
 
     def draw_laser(self,):
         """
@@ -169,7 +173,7 @@ class Laser:
             cancol = GREEN
             start = gameconv(can, self.ref, self.graphics.game_unit)
             end = gameconv(self.beam_calc(), self.ref, self.graphics.game_unit)
-            pg.draw.line(self.graphics.game.display, cancol, start, end, 5)
+            pg.draw.line(self.graphics.game.display, cancol, start, end, (int(self.intensity/10)+1))
             
         else:
             cancol = ORANGE
@@ -177,7 +181,7 @@ class Laser:
         pg.draw.circle(self.graphics.game.display,
                        cancol,
                        gameconv(can, self.ref, self.graphics.game_unit),                       
-                       int((0.5*(self.intensity/1000) + 0.3)*self.radius))
+                       int((0.5*(self.intensity/100) + 0.3)*self.radius))
 
         
 # ---------------------------------------- MATERIALS -----------------------------------------
