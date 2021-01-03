@@ -261,7 +261,7 @@ class Menu:
                     
                 if self.active_lvl1 == 1:
                     # A variable must be set to save the user's choice here.
-                    self.level = 'square'
+                    self.game.level = 'square'
                     self.game.mode = 'interface'
                     
                 if self.active_lvl2 == 1:

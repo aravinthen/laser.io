@@ -12,6 +12,7 @@ import os
 from menu import Menu
 from interface import Interface
 from graphics import Graphics
+from materials import Laser, Materials
 
 class LaserGame:
 #-------------------------------------------------------------------------------------------------
@@ -105,7 +106,6 @@ class LaserGame:
                            # Possible modes:  1. menu
                            #                  2. interface
                            #                  3. graphics
-                           
         
         pg.init() # initialize pygame
         finished = False

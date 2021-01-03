@@ -1,6 +1,5 @@
 # Program Name: interface.py
 # Author: Aravinthen Rajkumar
-# Description:
 
 import pygame as pg
 import pygame.freetype
@@ -35,6 +34,7 @@ class Interface:
         self.num = ""
 
         # program details
+        self.submitted = False # if the program has been submitted, this will be set as true.
         self.program = []
         self.high_level = [] # used for the display
 
@@ -123,7 +123,7 @@ class Interface:
         # TURN:           | TOF    | N          | Sets the OFF command
         # PAUSE:          | PAU    | Y          | Pauses program
         # SET INTENSITY:  | INT    | Y          | Sets intensity of the laser.
-        # FULL ROTATION:  | ROT    | Y          | Rotates the laser about the screen centre 
+        # MOVE:           | MOV    | Y          | Moves the the laser along the grid.
         # ORIENT:         | ORI    | Y          | Turns the laser about it's own midpoint.
         # START FOR LOOP: | SFR    | Y          | Set a for loop.
         # END FOR LOOP:   | EFR    | N          | Close a for loop.
@@ -134,7 +134,7 @@ class Interface:
         self.vton = 0.05*self.game.sy
 
         # turn off
-        self.tofpos = (0.75*self.game.sx, 0.6*self.game.sy)
+        self.tofpos = (0.7*self.game.sx, 0.6*self.game.sy)
         self.htof = 0.125*self.game.sx
         self.vtof = 0.05*self.game.sy
 
@@ -144,21 +144,21 @@ class Interface:
         self.vpau = 0.05*self.game.sy
 
         # intensity
-        self.intpos = (0.75*self.game.sx, 0.7*self.game.sy)
+        self.intpos = (0.7*self.game.sx, 0.7*self.game.sy)
         self.hint = 0.125*self.game.sx
         self.vint = 0.05*self.game.sy
 
-        # rotation
-        self.rotpos = (0.55*self.game.sx, 0.8*self.game.sy)
-        self.hrot = 0.125*self.game.sx
-        self.vrot = 0.05*self.game.sy
+        # MOVE
+        self.movpos = (0.55*self.game.sx, 0.8*self.game.sy)
+        self.hmov = 0.125*self.game.sx
+        self.vmov = 0.05*self.game.sy
 
         # orientation
-        self.oripos = (0.75*self.game.sx, 0.8*self.game.sy)
+        self.oripos = (0.7*self.game.sx, 0.8*self.game.sy)
         self.hori = 0.125*self.game.sx
         self.vori = 0.05*self.game.sy
 
-        # FOR LOOPS -----------------------------------------------------------------------
+        # FOR LOOP
         self.foron = 0 # if a for loop is called, this will be set as 1
         # start/end for loop (both buttons on the same position, called conditionally based on
         #                     self.foron)
@@ -166,10 +166,31 @@ class Interface:
         self.hfor = 0.125*self.game.sx
         self.vfor = 0.05*self.game.sy
 
-        # switch to graphics
-        self.backpos = (0.75*self.game.sx, 0.9*self.game.sy)
+        # delete line
+        self.backpos = (0.7*self.game.sx, 0.9*self.game.sy)
         self.hback = 0.125*self.game.sx
         self.vback = 0.05*self.game.sy
+
+        #-----------------------------------------------------------------------------------------
+        # OTHER FUNCTIONs
+        # - Switching to graphics.
+        # - Submitting program.
+        # - back to menu.
+        #-----------------------------------------------------------------------------------------
+        # switch to graphics.
+        self.graphpos = (0.85*self.game.sx, 0.6*self.game.sy)
+        self.hgraph = 0.125*self.game.sx
+        self.vgraph = 0.05*self.game.sy
+
+        # submit
+        self.subpos = (0.85*self.game.sx, 0.70*self.game.sy)
+        self.hsub = 0.125*self.game.sx
+        self.vsub = 0.25*self.game.sy
+
+        # quit
+        self.quitpos = (0.90*self.game.sx, 0.01*self.game.sy)
+        self.hquit = 0.08*self.game.sx
+        self.vquit = 0.05*self.game.sy        
 
     # --------------------------------------------------------------------------------------------
     # COMMAND FUNCTIONS
@@ -190,9 +211,7 @@ class Interface:
             else:
                 self.high_level.append("LASER.STATUS = ON")
             time.sleep(3*self.sleep_time)
-            for i in self.high_level:
-                print(i)
-            print(" ")
+
             
         # Turn off
         if hoverclick(self.tofpos, self.htof, self.vtof):
@@ -202,9 +221,7 @@ class Interface:
             else:
                 self.high_level.append("LASER.STATUS = OFF")
             time.sleep(3*self.sleep_time)
-            for i in self.high_level:
-                print(i)
-            print(" ")
+
 
         # Pause
         if hoverclick(self.paupos, self.hpau, self.vpau):
@@ -226,14 +243,14 @@ class Interface:
                 self.high_level.append("LASER.COMMAND(INTENSITY) = [TW] ")
             time.sleep(3*self.sleep_time)
 
-        # rotation
-        if hoverclick(self.rotpos, self.hrot, self.vrot):
+        # Movement
+        if hoverclick(self.movpos, self.hmov, self.vmov):
             self.num_entry = True
             self.program.append("ROT ")
             if self.foron == 1:
-                self.high_level.append("> LASER.COMMAND(ROTATION) = [DEG] ")
+                self.high_level.append("> LASER.COMMAND(MOVE) = [MM] ")
             else:
-                self.high_level.append("LASER.COMMAND(ROTATION) = [DEG] ")
+                self.high_level.append("LASER.COMMAND(MOVE) = [MM] ")
             time.sleep(3*self.sleep_time)
 
         # orient
@@ -260,16 +277,29 @@ class Interface:
                 self.program.append("EFR")
                 self.foron = 0
                 time.sleep(3*self.sleep_time)
-                for i in self.high_level:
-                    print(i)
-                print(" ")
-                
+
+        # delete line
         if hoverclick(self.backpos, self.hback, self.vback):
             self.program = self.program[0:len(self.program)-1]
             self.high_level = self.high_level[0:len(self.high_level)-1]
             time.sleep(3*self.sleep_time)
-            for i in self.high_level:
-                print(i)
+
+        if hoverclick(self.graphpos, self.hgraph, self.vgraph):
+            self.game.mode = "graphics"
+            time.sleep(0.5*self.sleep_time)
+
+        if hoverclick(self.quitpos, self.hquit, self.vquit):
+            self.game.mode = "menu"
+            self.game.level = None
+            self.program = []
+            self.high_level = []
+            time.sleep(3*self.sleep_time)
+            
+        if hoverclick(self.subpos, self.hsub, self.vsub):
+            self.game.mode = "graphics"
+            self.submitted = True
+            print("NOT IMPLEMENTED!")
+            time.sleep(3*self.sleep_time)
             
     def number_input(self,):
         # allows the user to input numbers for commands that need them
@@ -286,15 +316,13 @@ class Interface:
             self.high_level[-1] += f"{self.num}"
             self.num = ""
             
-            for i in self.high_level:
-                print(i)
-            print(" ")
                 
             self.num_entry = False
 
         if hoverclick(self.canpos, self.canh, self.canv) == True:
             self.num = ""            
             self.program = self.program[0:len(self.program)-1]
+            self.high_level = self.high_level[0:len(self.high_level)-1]
             self.num_entry = False
             time.sleep(self.sleep_time)
             
@@ -356,19 +384,27 @@ class Interface:
         h = 0.47*self.game.sx
         v = 0.5*self.game.sy
 
-        def command_button(string, pos, h, v, mx, my, game, message):
-            def command_disp(string, pos, h, v, mx, my, game):
-                displayfont = pygame.font.Font('freesansbold.ttf', 20) # font        
-                disp = displayfont.render(string, True, GREEN, BLACK)
-                displayRect = disp.get_rect()
-                displayRect.center = (pos[0]+0.55*h, pos[1]+0.7*v)
-                game.display.blit(disp, displayRect)                
-                
+        def command_disp(string, pos, h, v, mx, my, game, font=20, extra=None):
+            displayfont = pygame.font.Font('freesansbold.ttf', font) # font        
+            disp = displayfont.render(string, True, GREEN, BLACK)
+            displayRect = disp.get_rect()
+            displayRect.center = (pos[0]+0.55*h, pos[1]+0.7*v)
+            game.display.blit(disp, displayRect)                
+        
+        def command_button(string, pos, h, v, mx, my, game, message, font=20, extra=None):
             buttonfont = pygame.font.Font('freesansbold.ttf', 18) # font
             if (mx > pos[0] and mx < pos[0]+h) and (my > pos[1] and my < pos[1]+v):
-                button = buttonfont.render(string, True, GREEN, BLACK)
-                
-                command_disp(message, (0.67*self.game.sx, 0.2*self.game.sy), h, v, mx, my, game)
+                button = buttonfont.render(string, True, GREEN, BLACK)                
+                command_disp(message, (0.68*self.game.sx, 0.2*self.game.sy), h, v, mx, my, game)
+                if extra!=None:
+                    for i in range(len(extra)):
+                        command_disp(extra[i],
+                                     (0.68*self.game.sx, (0.25 + 0.05*i)*self.game.sy),
+                                     h,
+                                     v,
+                                     mx,
+                                     my,
+                                     game)
             else:
                 button = buttonfont.render(string, True, NEONGREEN, BLACK)
                 
@@ -385,23 +421,49 @@ class Interface:
         tofmess = "Turn the laser off."
         paumess = "Pause the laser for a given time."
         intmess = "Set the intensity of the laser."
-        rotmess = "Rotate the laser."
+        movmess = "Move the laser along the grid."
+        extramov = ["Positive input: move clockwise.",
+                    "Negative input: move anticlockwise"]
         orimess = "Orient the laser."
         formess = "Begin FOR loop."
         efomess = "End FOR loop."
         delmess = "Delete the previous line."
+        graphmess = "Switch to the laser screen."
+        submess = ">> SUBMIT <<"
+        quitmess = "Return to the menu screen."
         command_button(" TURN ON", self.tonpos, self.hton, self.vton, mx, my, self.game, tonmess)
         command_button("TURN OFF", self.tofpos, self.htof, self.vtof, mx, my, self.game, tofmess)
         command_button("   PAUSE", self.paupos, self.hpau, self.vpau, mx, my, self.game, paumess)
         command_button("INTENSITY", self.intpos, self.hint, self.vint, mx, my, self.game, intmess)
-        command_button("   ROTATE", self.rotpos, self.hrot, self.vrot, mx, my, self.game, rotmess)
+        command_button("    MOVE", self.movpos, self.hmov, self.vmov, mx, my, self.game, movmess, extra=extramov)
         command_button("   ORIENT", self.oripos, self.hori, self.vori, mx, my, self.game, orimess)
         if self.foron == 1:
             command_button("END LOOP", self.forpos, self.hfor, self.vfor, mx, my, self.game, efomess)
         else:
             command_button("    LOOP", self.forpos, self.hfor, self.vfor, mx, my, self.game, formess)
-        command_button("   DELETE", self.backpos, self.hback, self.vback, mx, my, self.game, delmess)
-    
+            
+        command_button("   DELETE", self.backpos, self.hback, self.vback, mx, my, self.game, delmess)        
+        command_button("   SWITCH", self.graphpos, self.hgraph, self.vgraph, mx, my, self.game, graphmess)
+        command_button("   SUBMIT", self.subpos, self.hsub, self.vsub, mx, my, self.game, submess)
+        command_button("  QUIT", self.quitpos, self.hquit, self.vquit, mx, my, self.game, quitmess)
+
+        warnfont = pygame.font.Font('freesansbold.ttf', 10) # font        
+        warn1 = warnfont.render("WARNING!", True, GREEN, BLACK)
+        warn2 = warnfont.render("Once program starts", True, GREEN, BLACK)
+        warn3 = warnfont.render("it can't be stopped!", True, GREEN, BLACK)
+        
+        warn1Rect = warn1.get_rect()
+        warn2Rect = warn2.get_rect()
+        warn3Rect = warn3.get_rect()
+        
+        warn1Rect.center = (self.subpos[0]+0.067*self.game.sx, self.subpos[1]+0.1*self.game.sy)
+        warn2Rect.center = (self.subpos[0]+0.067*self.game.sx, self.subpos[1]+0.13*self.game.sy)
+        warn3Rect.center = (self.subpos[0]+0.067*self.game.sx, self.subpos[1]+0.155*self.game.sy)
+        
+        self.game.display.blit(warn1, warn1Rect)
+        self.game.display.blit(warn2, warn2Rect)
+        self.game.display.blit(warn3, warn3Rect) 
+        
     def draw_numbers(self,):
         # throws up a number entry screen.
         mx, my = pg.mouse.get_pos() # mouse coordinates for interactivity
@@ -459,7 +521,7 @@ class Interface:
         button(" 8", self.pos8, self.h8, self.v8, mx, my, self.cx, self.cy, self.game)
         button(" 9", self.pos9, self.h9, self.v9, mx, my, self.cx, self.cy, self.game)
         button(" .", self.posd, self.hd, self.vd, mx, my, self.cx, self.cy, self.game)
-        button(" -", self.posm, self.hm, self.vm, mx, my, self.cx, self.cy, self.game)
+        button(" -", self.posm, self.hm, self.vm, mx, my, self.cx, self.cy, self.game)        
         
         # this displays the typed string on the bar
         disp(self.num,
@@ -490,8 +552,10 @@ class Interface:
                       self.game)
 
     
-    #--------------------------------------------------------------------------------------
-        
+    # ------------------------------------------------------------------------------------------
+    # LEAD FUNCTIONS
+    # ------------------------------------------------------------------------------------------
+    
     def UpdateInterface(self,):        
         if self.num_entry == True:
             self.number_input()
@@ -512,7 +576,4 @@ class Interface:
         self.draw_commands()        
         if self.num_entry == True:
             self.draw_numbers()
-
-        
-
 
