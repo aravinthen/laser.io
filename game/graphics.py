@@ -136,7 +136,7 @@ class Graphics:
     
     def UpdateGraphics(self,):
         self.buttons()
-        if self.game.interface.submitted == True:
+        if self.game.interface.submitted == True and self.laser.finished == False:
             self.laser.update_laser()
             
     def DrawGraphics(self,):

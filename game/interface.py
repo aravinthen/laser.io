@@ -35,6 +35,7 @@ class Interface:
 
         # program details
         self.submitted = False # if the program has been submitted, this will be set as true.
+        self.index = 0 # the index that the program is currently on.
         self.program = []
         self.high_level = [] # used for the display
 
@@ -120,7 +121,7 @@ class Interface:
         # FUNCTION        | Symbol | Calculator | Description
         #------------------------------------------------------------------------------------
         # TURN ON:        | TON    | N          | Sets the ON command
-        # TURN:           | TOF    | N          | Sets the OFF command
+        # TURN OFF:       | TOF    | N          | Sets the OFF command
         # PAUSE:          | PAU    | Y          | Pauses program
         # SET INTENSITY:  | INT    | Y          | Sets intensity of the laser.
         # MOVE:           | MOV    | Y          | Moves the the laser along the grid.
@@ -205,7 +206,7 @@ class Interface:
 
         # Turn on 
         if hoverclick(self.tonpos, self.hton, self.vton):
-            self.program.append("TON")
+            self.program.append("TON 1")
             if self.foron == 1:
                 self.high_level.append("> LASER.STATUS = ON")
             else:
@@ -215,7 +216,7 @@ class Interface:
             
         # Turn off
         if hoverclick(self.tofpos, self.htof, self.vtof):
-            self.program.append("TOF")
+            self.program.append("TOF 1")
             if self.foron == 1:
                 self.high_level.append(">  LASER.STATUS = OFF")
             else:
@@ -246,7 +247,7 @@ class Interface:
         # Movement
         if hoverclick(self.movpos, self.hmov, self.vmov):
             self.num_entry = True
-            self.program.append("ROT ")
+            self.program.append("MOV ")
             if self.foron == 1:
                 self.high_level.append("> LASER.COMMAND(MOVE) = [MM] ")
             else:
@@ -280,14 +281,19 @@ class Interface:
 
         # delete line
         if hoverclick(self.backpos, self.hback, self.vback):
+            if self.foron == 1 and self.program[len(self.program)-1].split(" ")[0] == "SFR":
+                self.foron = 0
+
             self.program = self.program[0:len(self.program)-1]
             self.high_level = self.high_level[0:len(self.high_level)-1]
             time.sleep(3*self.sleep_time)
-
+            
+        # switch to graphics
         if hoverclick(self.graphpos, self.hgraph, self.vgraph):
             self.game.mode = "graphics"
             time.sleep(0.5*self.sleep_time)
 
+        # quit
         if hoverclick(self.quitpos, self.hquit, self.vquit):
             self.game.mode = "menu"
             self.game.level = None
@@ -295,10 +301,10 @@ class Interface:
             self.high_level = []
             time.sleep(3*self.sleep_time)
             
+        # submit code
         if hoverclick(self.subpos, self.hsub, self.vsub):
             self.game.mode = "graphics"
             self.submitted = True
-            print("NOT IMPLEMENTED!")
             time.sleep(3*self.sleep_time)
             
     def number_input(self,):

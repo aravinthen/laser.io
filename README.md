@@ -13,7 +13,7 @@ Developers: Please have a look at the *DevGuide.org* file to see how the game is
 7. Develop a display mechanism for the left-hand side of the interface. (Done)
 8. Build a button to switch from interface to laser graphics and back again. (Done)
 
-9. Develop the Laser subclass in the graphics class.
+9. Develop the Laser subclass in the graphics class.   
 10. Develop the Materials subclass in the graphics class.
 11. Add the material configuration corresponding to the chosen level.
 12. Work out the mechanics of the laser-material interaction.

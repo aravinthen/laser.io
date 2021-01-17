@@ -62,6 +62,8 @@ class Laser:
         energy).
         """
         self.graphics = graphics
+        self.game = self.graphics.game
+        self.interface = self.graphics.game.interface
 
         # The position of the laser is ONE DIMENSIONAL with modulo 400 to represent a
         # on a square with unit 100 side length.
@@ -80,13 +82,16 @@ class Laser:
 
         # reference
         self.ref = np.array([self.graphics.xcoord, self.graphics.ycoord])
+        self.read_commands = None
+        self.finished = False
 
         # fineness of the laser beam
         # lower fineness == better accuracy, but slower calculation.
         self.fine = 0.1
         
         # State variables
-        self.on = True
+        self.on = False
+        self.error = False
         self.position = 250
         self.angle = 90
         self.intensity = 5
@@ -140,15 +145,40 @@ class Laser:
         Updates the state of the laser variables.
         If the laser's state variable is True, a line will be drawn. 
         """
-        self.angle+=1
-        self.position+=1
-        self.intensity+=1
-        if (self.angle + self.position) % 48 == 0:
-            self.on = not self.on
+        if self.interface.index == len(self.interface.program):
+            self.finished == True
+            return 0
+        
+        current_command = self.interface.program[self.interface.index].split(" ")
+        argument = current_command[0]
+        value = int(current_command[1])
+        
+        if value == 0:
+            self.interface.index += 1
+        else:        
+            if argument == "TON":
+                self.interface.program[self.interface.index] = "TON " + str(value-1)
+                self.on = True
+                
+            if argument == "TOF":
+                self.interface.program[self.interface.index] = "TOF " + str(value-1)
+                self.on = False
+                
+            if argument == "PAU":
+                self.interface.program[self.interface.index] = "PAU " + str(value-1)
 
-        if self.intensity > 100:
-            self.intensity = 100
+            if argument == "INT":
+                self.intensity = value
+                self.interface.index+=1
+                
+            if argument == "MOV":
+                self.interface.program[self.interface.index] = "MOV " + str(value-1)
+                self.position += 1
 
+            if argument == "ORI":
+                self.interface.program[self.interface.index] = "ORI " + str(value-1)
+                self.angle += 1
+        
     def draw_laser(self,):
         """
         NOTE: TRANSFORMATIONS MUST BE APPLIED HERE.
