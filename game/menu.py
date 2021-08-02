@@ -12,7 +12,12 @@ import time
 
 # Colours
 BLUE = (106, 160, 184)
+DBLUE = (0, 0, 128)
 LBLUE = (0, 134, 143)
+LGRAY = (211,211,211)
+GRAY = (169,169,169)
+STEEL = (105, 105, 105)
+IRON = (47,79,79)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (128, 255, 0)
@@ -80,10 +85,10 @@ class Menu:
 
         # information slide data
         # When mouse hovers over a level button, a description of the level will be displayed
-        self.slide_coords = (0.23*self.game.sx,
+        self.slide_coords = (0.01*self.game.sx,
                              0.01*self.game.sy,
-                             0.58*self.game.sx,
-                             0.95*self.game.sy)
+                             0.98*self.game.sx,
+                             0.98*self.game.sy)
         
         # level select data
         self.active_lvl1 = 0
@@ -205,7 +210,7 @@ class Menu:
                     ((self.lback_pos[0]-self.minor_width//2 < mx) and (mx < self.lback_pos[0]+self.minor_width//2)) and
                     ((self.lback_pos[1]-self.minor_height//2 < my) and (my < self.lback_pos[1]+self.minor_height//2))
                ):
-                self.active_lback = 1                                
+                self.active_lback = 1            
             else:
                 self.active_lback = 0
 
@@ -215,7 +220,18 @@ class Menu:
                     ((self.lvl1_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl1_pos[0]+self.minor_width//2)) and
                     ((self.lvl1_pos[1]-self.minor_height//2 < my) and (my < self.lvl1_pos[1]+self.minor_height//2))
                ):
-                self.active_lvl1 = 1                                
+                self.active_lvl1 = 1
+                self.game.graphics.materials.init_level(1, bgcol=BLUE)
+                self.game.graphics.materials.draw_material()
+
+                descfont = pygame.font.Font('freesansbold.ttf', 17) # font
+                desc = descfont.render('An easy level, can be done in a few lines using a FOR loop.', True, WHITE, None)
+                descRect = desc.get_rect()
+                descRect.width = 50
+                descRect.height = 30
+                descRect.center = ((0.25)*self.game.sx, (0.9)*self.game.sy)
+                self.game.display.blit(desc, descRect)
+                
             else:
                 self.active_lvl1 = 0
 
@@ -224,7 +240,18 @@ class Menu:
                     ((self.lvl2_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl2_pos[0]+self.minor_width//2)) and
                     ((self.lvl2_pos[1]-self.minor_height//2 < my) and (my < self.lvl2_pos[1]+self.minor_height//2))
                ):
-                self.active_lvl2 = 1                                
+                self.active_lvl2 = 1
+                self.game.graphics.materials.init_level(2, bgcol=LGRAY)
+                self.game.graphics.materials.draw_material()
+
+                descfont = pygame.font.Font('freesansbold.ttf', 17) # font
+                desc = descfont.render('This level is a bit more intricate. Keep things simple.', True, WHITE, None)
+                descRect = desc.get_rect()
+                descRect.width = 50
+                descRect.height = 30
+                descRect.center = ((0.25)*self.game.sx, (0.9)*self.game.sy)
+                self.game.display.blit(desc, descRect)
+                
             else:
                 self.active_lvl2 = 0
             
@@ -233,7 +260,18 @@ class Menu:
                     ((self.lvl3_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl3_pos[0]+self.minor_width//2)) and
                     ((self.lvl3_pos[1]-self.minor_height//2 < my) and (my < self.lvl3_pos[1]+self.minor_height//2))
                ):
-                self.active_lvl3 = 1                                
+                self.active_lvl3 = 1
+                self.game.graphics.materials.init_level(3, bgcol=GRAY)
+                self.game.graphics.materials.draw_material()
+
+                descfont = pygame.font.Font('freesansbold.ttf', 17) # font
+                desc = descfont.render('Things are getting hard now. Remember to be precise!', True, WHITE, None)
+                descRect = desc.get_rect()
+                descRect.width = 50
+                descRect.height = 30
+                descRect.center = ((0.25)*self.game.sx, (0.9)*self.game.sy)
+                self.game.display.blit(desc, descRect)
+                
             else:
                 self.active_lvl3 = 0
 
@@ -242,7 +280,17 @@ class Menu:
                     ((self.lvl4_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl4_pos[0]+self.minor_width//2)) and
                     ((self.lvl4_pos[1]-self.minor_height//2 < my) and (my < self.lvl4_pos[1]+self.minor_height//2))
                ):
-                self.active_lvl4 = 1                                
+                self.active_lvl4 = 1
+                self.game.graphics.materials.init_level(4, bgcol=STEEL)
+                self.game.graphics.materials.draw_material()
+                
+                descfont = pygame.font.Font('freesansbold.ttf', 17) # font
+                desc = descfont.render('This is getting really hard... great job getting this far!', True, WHITE, None)
+                descRect = desc.get_rect()
+                descRect.width = 50
+                descRect.height = 30
+                descRect.center = ((0.25)*self.game.sx, (0.9)*self.game.sy)
+                self.game.display.blit(desc, descRect)
             else:
                 self.active_lvl4 = 0
 
@@ -250,28 +298,46 @@ class Menu:
                     ((self.lvl5_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl5_pos[0]+self.minor_width//2)) and
                     ((self.lvl5_pos[1]-self.minor_height//2 < my) and (my < self.lvl5_pos[1]+self.minor_height//2))
                ):
-                self.active_lvl5 = 1                                
+                self.active_lvl5 = 1
+                self.game.graphics.materials.init_level(5, bgcol=IRON)
+                self.game.graphics.materials.draw_material()
+                
+                descfont = pygame.font.Font('freesansbold.ttf', 17) # font
+                desc = descfont.render('This is might be impossible. Maybe you\'ll prove me wrong!', True, WHITE, None)
+                descRect = desc.get_rect()
+                descRect.width = 50
+                descRect.height = 30
+                descRect.center = ((0.25)*self.game.sx, (0.9)*self.game.sy)
+                self.game.display.blit(desc, descRect)
+                
             else:
                 self.active_lvl5 = 0                
 
             if click[0] == 1:
                 if self.active_lback == 1:
-                    self.menumode = 'default'
+                    self.menumode = 'default'                    
                     time.sleep(self.sleep_time)
                     
                 if self.active_lvl1 == 1:
-                    # A variable must be set to save the user's choice here.
-                    self.game.level = 'square'
+                    self.game.graphics.materials.init_level(1)
                     self.game.mode = 'interface'
                     
                 if self.active_lvl2 == 1:
-                    print("TBD")
-                if self.active_lvl3 == 1:                    
-                    print("TBD")
-                if self.active_lvl4 == 1:                    
-                    print("TBD")
-                if self.active_lvl5 == 1:                    
-                    print("TBD")
+                    self.game.graphics.materials.init_level(2)
+                    self.game.mode = 'interface'
+
+                if self.active_lvl3 == 1:
+                    self.game.graphics.materials.init_level(3)
+                    self.game.mode = 'interface'
+
+                if self.active_lvl4 == 1:
+                    self.game.graphics.materials.init_level(4)
+                    self.game.mode = 'interface'
+
+                if self.active_lvl5 == 1:
+                    self.game.graphics.materials.init_level(5)
+                    self.game.mode = 'interface'
+
             # -----------------------------------     LEVELS   --------------------------------------------------
 
         if self.menumode == 'instructions':
@@ -353,15 +419,30 @@ class Menu:
         if self.menumode == "default":
             # ------------------------- BACKGROUND -----------------------
             # The Menu background colour is defined over here.
-            self.game.display.fill(WHITE)
+            self.game.display.fill(BLACK)
             # ---------------------------- TEXT --------------------------
             # create a text surface object on which text is drawn on it.
+
+            presfont = pygame.font.Font('freesansbold.ttf', 20) # font
+            pres = presfont.render('HETSYS CDT presents', True, GRAY, BLACK) 
+            presRect = pres.get_rect()                              # Initialise the text box
+            presRect.center = (self.game.sx//2, (0.20)*self.game.sy) # rectangle position
             
-            # GAME TITLE DEFINED BELOW (obviously subject to change)
-            titlefont = pygame.font.Font('freesansbold.ttf', 50) # font
-            title = titlefont.render('laser.io', True, BLUE, WHITE) 
-            titleRect = title.get_rect()                              # Initialise the text box
-            titleRect.center = (self.game.sx//2, (0.30)*self.game.sy) # rectangle position
+            # GAME TITLE DEFINED BELOW (
+            titlefont = pygame.font.Font('freesansbold.ttf', 50)
+            title = titlefont.render('laser.io !', True, BLUE, None) 
+            titleRect = title.get_rect()                              
+            titleRect.center = ((self.game.sx//2), (0.30)*self.game.sy)
+            
+            title1font = pygame.font.Font('freesansbold.ttf', 50)
+            title1 = title1font.render('laser.io !', True, GREEN, None) 
+            title1Rect = title1.get_rect()                              
+            title1Rect.center = ((self.game.sx//2)-2, (0.30)*self.game.sy-2)
+                        
+            title2font = pygame.font.Font('freesansbold.ttf', 50)
+            title2 = title2font.render('laser.io !', True, RED, None) 
+            title2Rect = title2.get_rect()                              
+            title2Rect.center = ((self.game.sx//2)-4, (0.30)*self.game.sy-4) 
 
             # BUTTONS
             # The PLAY button
@@ -406,9 +487,12 @@ class Menu:
             credRect.width = self.minor_width
             credRect.height = self.minor_height
             credRect.center = self.cred_pos
-            
+             
             # DRAWING IT ALL TO SCREEN -------------------------------------
+            self.game.display.blit(title2, title2Rect)
+            self.game.display.blit(title1, title1Rect)
             self.game.display.blit(title, titleRect)
+            self.game.display.blit(pres, presRect)
             self.game.display.blit(instruct, instructRect)
             self.game.display.blit(high, highRect)
             self.game.display.blit(cred, credRect)
@@ -416,7 +500,18 @@ class Menu:
             
         # Draw the level select screen.
         if self.menumode == "level":
-            self.game.display.fill(WHITE)
+            self.game.display.fill(BLACK)
+            # level information slides:
+            if self.active_lvl1 == 1:
+                pg.draw.rect(self.game.display, BLUE, self.slide_coords)
+            if self.active_lvl2 == 1:
+                pg.draw.rect(self.game.display, LGRAY, self.slide_coords)
+            if self.active_lvl3 == 1:
+                pg.draw.rect(self.game.display, GRAY, self.slide_coords)
+            if self.active_lvl4 == 1:
+                pg.draw.rect(self.game.display, STEEL, self.slide_coords)
+            if self.active_lvl5 == 1:
+                pg.draw.rect(self.game.display, IRON, self.slide_coords)
             
             # the BACK button
             lbackfont = pygame.font.Font('freesansbold.ttf', 30) # font
@@ -494,22 +589,10 @@ class Menu:
             self.game.display.blit(lvl4, lvl4Rect)
             self.game.display.blit(lvl5, lvl5Rect)
 
-            # level information slides:
-            if self.active_lvl1 == 1:
-                pg.draw.rect(self.game.display, BLUE, self.slide_coords)
-            if self.active_lvl2 == 1:
-                pg.draw.rect(self.game.display, GREEN, self.slide_coords)
-            if self.active_lvl3 == 1:
-                pg.draw.rect(self.game.display, ORANGE, self.slide_coords)
-            if self.active_lvl4 == 1:
-                pg.draw.rect(self.game.display, RED, self.slide_coords)
-            if self.active_lvl5 == 1:
-                pg.draw.rect(self.game.display, BLACK, self.slide_coords)
-
         # Draw the instructions screen.
         if self.menumode == "instructions":
             # wipe the screen
-            self.game.display.fill(WHITE)
+            self.game.display.fill(BLACK)
             #------------------------------------------------------------------------------------------
             # TUTORIAL TEXT
             # NOTE: If you add a new page, MAKE SURE TO CHANGE THE self.num_pages variable to account for it!
@@ -571,7 +654,7 @@ class Menu:
         # Draw the highscore screen
         if self.menumode == "highscore":
             # wipe the screen
-            self.game.display.fill(WHITE)
+            self.game.display.fill(BLACK)
             # BUTTONS
             # the BACK button
             hbackfont = pygame.font.Font('freesansbold.ttf', 30) # font
@@ -590,11 +673,11 @@ class Menu:
         # Draw the credits screen
         if self.menumode == "credits":
             # wipe the screen
-            self.game.display.fill(WHITE)
+            self.game.display.fill(BLACK)
 
             # CREDITS
             titlefont = pygame.font.Font('freesansbold.ttf', 30) # font
-            title = titlefont.render('CREDITS', True, BLACK, WHITE)
+            title = titlefont.render('CREDITS                                                       ', True, BLACK, WHITE)
             titleRect = title.get_rect()
             titleRect.width = 100
             titleRect.height = 30
@@ -602,14 +685,14 @@ class Menu:
 
             # CREDITS
             progfont = pygame.font.Font('freesansbold.ttf', 19) # font
-            prog = progfont.render('Programming', True, BLACK, WHITE)
+            prog = progfont.render('Programming', True, WHITE, None)
             progRect = prog.get_rect()
             progRect.width = 50
             progRect.height = 30
             progRect.center = ((0.20)*self.game.sx, (0.20)*self.game.sy)
             
             arrefont = pygame.font.Font('freesansbold.ttf', 19) # font
-            arre = arrefont.render('Aravinthen Rajkumar', True, BLACK, WHITE)
+            arre = arrefont.render('Aravinthen Rajkumar', True, WHITE, None)
             arreRect = arre.get_rect()
             arreRect.width = 50
             arreRect.height = 30
@@ -632,3 +715,4 @@ class Menu:
             self.game.display.blit(prog, progRect)
             self.game.display.blit(arre, arreRect)
             self.game.display.blit(cback, cbackRect)
+

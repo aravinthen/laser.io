@@ -6,6 +6,7 @@ import pygame.freetype
 from pygame.sprite import Sprite
 from pygame.rect import Rect
 import time
+import numpy as np
 
 import math as m
 import os
@@ -37,7 +38,6 @@ class Graphics:
         self.vback = 0.05*self.game.sy
         
         # The specifications of the grid
-        
         self.reference = 0.9*min([self.game.sx, self.game.sy])
         self.game_unit = self.reference/100 # the in-game units, instead of pixels        
         self.xcoord = 0.5*(max([self.game.sx, self.game.sy]) - self.reference)
@@ -47,10 +47,16 @@ class Graphics:
         # THE MAIN GRAPHICS OBJECTS WILL BE STORED
         
         self.laser = Laser(self)
+        self.materials = Materials(self, self.laser)
 
         # -----------------------------------------------------------------------------------------
         # Auxillary utilities
         # -----------------------------------------------------------------------------------------
+        self.score_displayed = False
+        self.score_window = (self.game.sx*(1/2-0.1), (0.10)*self.game.sy)
+        self.score_size = (0.1*self.reference, 0.1*self.reference)
+        self.score = 0
+        
         
     def buttons(self, ):        
         def hoverclick(pos, h, v):
@@ -63,6 +69,20 @@ class Graphics:
         if self.game.interface.submitted == False:            
             if hoverclick(self.backpos, self.hback, self.vback):
                 self.game.mode = "interface"
+                time.sleep(3*self.sleep_time)
+
+        if self.game.interface.submitted == True:            
+            if hoverclick(self.backpos, self.hback, self.vback):
+                self.game.mode = "interface"
+                self.materials.init_level(self.materials.level)
+                
+                self.laser.reset()
+                self.game.interface.reset()
+
+                self.laser.finished = False
+                self.score_displayed = False
+                self.score = 0
+                
                 time.sleep(3*self.sleep_time)
 
     def draw_buttons(self, ):
@@ -84,6 +104,9 @@ class Graphics:
 
         if self.game.interface.submitted == False:
             command_button("BACK", self.backpos, self.hback, self.vback, mx, my, self.game)
+
+        if self.game.interface.submitted == True:
+            command_button("RESTART", self.backpos, self.hback, self.vback, mx, my, self.game)
 
     def measure(self, ):
         # Allows the player to check coordinates using the mouse when clicking.
@@ -113,14 +136,7 @@ class Graphics:
                      WHITE,
                      (self.xcoord, self.ycoord, self.reference, self.reference),
                      2)
-
-    def scoring(self,):
-        """
-        This is used to compare the CURRENT state of the material to the GOAL state.
-        The Goal state will have been set in the menu.
-        """
-        pass
-
+            
     def info(self,):
         # Displays vital information for the player.
         #  - The state and parameters of the laser
@@ -129,6 +145,38 @@ class Graphics:
         #  - The amount of energy the laser has left
         pass
 
+    def game_finished(self,):        
+        # displays score if finished.
+        if self.score_displayed == True:
+            
+            pg.draw.rect(self.game.display,
+                         WHITE,
+                         (self.score_window[0],
+                          self.score_window[1],
+                          self.score_size[0],
+                          self.score_size[1]),
+                         0)
+            
+            scorefont = pygame.font.Font('freesansbold.ttf', 19) # font
+            score = scorefont.render(f'Score: {self.score}', True, DBLUE, WHITE)
+            scoreRect = score.get_rect()
+            scoreRect.width = 50
+            scoreRect.height = 30
+            scoreRect.center = self.score_window
+
+            self.game.display.blit(score, scoreRect)
+            
+        else:
+
+            size = np.shape(self.materials.matpix)[0]
+            for i in range(size):
+                for j in range(size):
+                    if (self.materials.matpix[i,j,:] == RED).all():
+                        self.score+=20
+                    if (self.materials.matpix[i,j,:].all() == ORANGE).all():
+                        self.score-=1
+
+            self.score_displayed = True
 
     # ------------------------------------------------------------------------------------------
     # LEAD FUNCTIONS
@@ -141,11 +189,15 @@ class Graphics:
             
     def DrawGraphics(self,):
         self.game.display.fill(DBLUE)
-        self.measure()
         self.draw_grid()
         self.draw_buttons()
 
         # drawing materials
+        self.materials.draw_material()
         self.laser.draw_laser()
+        self.measure()
+
+        if self.laser.finished == True:
+            self.game_finished()
 
 

@@ -36,6 +36,7 @@ class Interface:
         # program details
         self.submitted = False # if the program has been submitted, this will be set as true.
         self.index = 0 # the index that the program is currently on.
+        self.program_error = False
         self.program = []
         self.high_level = [] # used for the display
 
@@ -193,6 +194,56 @@ class Interface:
         self.hquit = 0.08*self.game.sx
         self.vquit = 0.05*self.game.sy        
 
+
+    def reset(self,):
+        # resets everything to default
+        self.submitted = False # if the program has been submitted, this will be set as true.
+        self.index = 0 # the index that the program is currently on.
+        self.program_error = False
+        self.program = []
+        self.high_level = [] # used for the display
+        
+    # --------------------------------------------------------------------------------------------
+    # Parsing
+    # Used in "command input"
+    # --------------------------------------------------------------------------------------------
+    def parse(self,):
+        for line in range(len(self.program)):
+            current_command = self.program[line].split(" ")
+            if (current_command[0] in ["PAU", "INT", "FOR"]) and (int(current_command[1]) < 0):
+                return False, line
+
+            if current_command[0] == "SFR":
+                loops = line # beginning of loop
+                
+                loop_count = line # will be assigned to loopf when completed.
+                closed = False
+                while loop_count < len(self.program):
+                    if self.program[loop_count].split(" ")[0] == "EFR":
+                        closed = True
+                        loopf = loop_count
+                        break
+                    else:
+                        loop_count+=1
+                        
+                if closed == False:
+                    return False, line
+                else:
+                    # cut the list into the beginning,
+                    start_list = self.program[0:loops]
+                    # the end,
+                    end_list = self.program[loopf+1:]
+                    # and the middle part that has to be repeated.
+                    loop_list = self.program[loops+1:loopf]
+
+                    self.program = start_list + int(current_command[1])*loop_list + end_list
+                    
+                    # repeats the procedure until no SFRs or EFRs exist in the program string.
+                    # this is so lazy, i fucking love it
+                    self.parse()
+        else:
+            return True, -1
+    
     # --------------------------------------------------------------------------------------------
     # COMMAND FUNCTIONS
     # --------------------------------------------------------------------------------------------
@@ -303,10 +354,21 @@ class Interface:
             
         # submit code
         if hoverclick(self.subpos, self.hsub, self.vsub):
-            self.game.mode = "graphics"
-            self.submitted = True
+            # ----------------------------------------------------------------------------
+            # FULL PARSING
+            # This is where the submitted code is checked and for-loops are expanded.
+            success, error_line = self.parse()
+            if success:
+                self.game.mode = "graphics"
+                self.submitted = True
+            else:
+                self.program_error = 1
+                self.program.append("ERR 1")
+                self.high_level.append("ERROR ON LINE " + str(error_line+1))
+                print("ERROR")
+            # ----------------------------------------------------------------------------
             time.sleep(3*self.sleep_time)
-            
+    
     def number_input(self,):
         # allows the user to input numbers for commands that need them
         click = pg.mouse.get_pressed()

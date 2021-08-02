@@ -134,4 +134,4 @@ class LaserGame:
 #     Check the new inputs
 #      Repeat
 
-LaserGame(800, 600, 30)
+LaserGame(800, 600, 25)

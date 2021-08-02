@@ -18,6 +18,57 @@ SILVER = (192,192,192)
 ORANGE = (255, 128, 0)
 RED = (255, 0, 0)
 
+#---------------------------------------------------------------------------------------------
+# LEVELS
+# Relocate this block of code!
+# Key:    1 - material blocks to be removed.
+#         2 - forbidden blocks, removing these reduces score.
+
+level1 = np.array([[0,0,0,0,0,0],
+                   [0,1,1,1,1,0],
+                   [0,1,2,2,1,0],
+                   [0,1,2,2,1,0],
+                   [0,1,1,1,1,0],
+                   [0,0,0,0,0,0]])
+
+level2 = np.array([[0,0,0,0,0,0,0,0,0,0],
+                   [0,1,1,1,1,1,1,1,1,0],
+                   [0,1,1,1,2,2,1,1,1,0],
+                   [0,1,1,2,2,2,2,1,1,0],
+                   [0,1,2,2,2,2,2,2,1,0],
+                   [0,1,2,2,2,2,2,2,1,0],
+                   [0,1,1,2,2,2,2,1,1,0],
+                   [0,1,1,1,1,1,1,1,1,0],
+                   [0,0,1,1,1,1,1,1,0,0],
+                   [0,0,0,0,0,0,0,0,0,0]])
+
+level3 = np.array([[0,0,0,0,0,0],
+                   [0,1,1,1,1,0],
+                   [0,1,2,2,1,0],
+                   [0,1,1,2,1,0],
+                   [0,1,1,1,1,0],
+                   [0,0,0,0,0,0]])
+
+level4 = np.array([[0,0,0,0,0,0],
+                   [0,1,1,1,1,0],
+                   [0,1,2,1,1,0],
+                   [0,1,2,2,1,0],
+                   [0,1,1,1,1,0],
+                   [0,0,0,0,0,0]])
+
+level5 = np.array([[0,0,0,0,0,0],
+                   [0,1,1,1,1,0],
+                   [0,1,1,2,1,0],
+                   [0,1,2,1,1,0],
+                   [0,1,1,1,1,0],
+                   [0,0,0,0,0,0]])
+
+
+# add all level variables to the list in order, will allow easy calling 
+level_list = [level1, level2, level3, level4, level5]
+
+#---------------------------------------------------------------------------------------------
+
 def one2two(pos):
     # this is a dreadfully ugly conversion fucntion for the 1d number into the
     # corresponding 2d value
@@ -94,7 +145,7 @@ class Laser:
         self.error = False
         self.position = 250
         self.angle = 90
-        self.intensity = 5
+        self.intensity = 2
 
         # rotation matrix, dependent on self.angle               
         # drawing
@@ -104,6 +155,12 @@ class Laser:
         # mag: the distance from the centre of the cannon to the tip
         self.mag = np.array([int(0.005*self.graphics.game.sy), 0])
 
+    def reset(self,):
+        self.on = False
+        self.error = False
+        self.position = 250
+        self.angle = 90
+        self.intensity = 2
 
     def beam_calc(self,):
         """
@@ -123,17 +180,36 @@ class Laser:
         
         xcond = (game_pos[0] > 0) and (game_pos[0]< self.graphics.game.sx)
         ycond = (game_pos[1] > 0) and (game_pos[1]< self.graphics.game.sy)
+
+        
         while xcond==True and ycond==True:
             # there's no point in initializing a new unit vector each time
             # scaling the fineness will have the required effect
 
-            #-----------------------------------------------------------------------------------
-            # TO BE IMPLEMENTED: material collision detection
-            #
-            #-----------------------------------------------------------------------------------
-
+            # material collision detection
             position += self.fine*direction
             game_pos = gameconv(position, self.ref, self.graphics.game_unit)
+
+            # conditions for gamepos[0]
+            lx0 = (game_pos[0] > self.graphics.materials.graph_x)
+            lx1 = (game_pos[0] < self.graphics.materials.graph_x + self.graphics.materials.graph_h)
+            
+            # conditions for gamepos[1]
+            ly0 = (game_pos[1] > self.graphics.materials.graph_y)
+            ly1 = (game_pos[1] < self.graphics.materials.graph_y + self.graphics.materials.graph_v)
+
+            if lx0 and lx1 and ly0 and ly1:
+                index1 = int(game_pos[0] - self.graphics.materials.graph_x)
+                index2 = int(game_pos[1] - self.graphics.materials.graph_y)
+                
+                collision = self.graphics.materials.matpix[index1, index2] == np.array(ORANGE)
+                
+                if collision.all():
+                    for i in range(-self.intensity,self.intensity):
+                        for j in range(-self.intensity,self.intensity):
+                            self.graphics.materials.matpix[index1+i, index2+j] = np.array(DBLUE)
+                    break
+            
             xcond = (game_pos[0] > 0) and (game_pos[0]< self.graphics.game.sx)
             ycond = (game_pos[1] > 0) and (game_pos[1]< self.graphics.game.sy)
 
@@ -146,16 +222,23 @@ class Laser:
         If the laser's state variable is True, a line will be drawn. 
         """
         if self.interface.index == len(self.interface.program):
-            self.finished == True
+            self.finished = True
             return 0
         
         current_command = self.interface.program[self.interface.index].split(" ")
         argument = current_command[0]
         value = int(current_command[1])
+
+        # for numerical arguments,
+        #  1. reduce the argument in the list by one
+        #  2. increment the corresponding state variable of the laser by one.
+        #  3. if zero, increment the index of the list.
         
         if value == 0:
             self.interface.index += 1
-        else:        
+        else:
+            # Remember: FOR doesn't turn up here.
+            #           it's dealt with in the "parsing" function and performed automatically.
             if argument == "TON":
                 self.interface.program[self.interface.index] = "TON " + str(value-1)
                 self.on = True
@@ -172,12 +255,12 @@ class Laser:
                 self.interface.index+=1
                 
             if argument == "MOV":
-                self.interface.program[self.interface.index] = "MOV " + str(value-1)
-                self.position += 1
+                self.interface.program[self.interface.index] = "MOV " + str(value-np.sign(value))
+                self.position += np.sign(value)
 
             if argument == "ORI":
-                self.interface.program[self.interface.index] = "ORI " + str(value-1)
-                self.angle += 1
+                self.interface.program[self.interface.index] = "ORI " + str(value-np.sign(value))
+                self.angle += np.sign(value)
         
     def draw_laser(self,):
         """
@@ -215,6 +298,8 @@ class Laser:
 
         
 # ---------------------------------------- MATERIALS -----------------------------------------
+
+
 class Materials:
     """
     There are two kinds of materials used in the game.
@@ -228,25 +313,58 @@ class Materials:
     NOTE: this needs to be as efficient as possible.
     It's best to build a system that checks the neighbourhood AROUND a point.
     """
-        
-    def __init__(self, game, laser):
-        """
+    #-----------------------------------------------------------------------------------------------
+    
+    def __init__(self, graphics, laser):
+        """ 
         Initialise material lists and relevant details.
         """
-        self.game = game
+        self.graphics = graphics
+        self.laser = laser
+
+        # dimensions of the box
+        self.graph_h = int(0.91*self.graphics.reference)+1
+        self.graph_v = int(0.91*self.graphics.reference)+1
+
+        # coordinates of the origin of the material matrix        
+        self.graph_x = self.graphics.xcoord + 0.03*self.graphics.game.sx
+        self.graph_y = self.graphics.ycoord + 0.04*self.graphics.game.sy
+
+        self.level = None
+        # the level matrix, designed by hand
+        self.level_matrix = None # initially none, but updated once the level is selected.
+
+
+    def init_level(self, level, bgcol=DBLUE):
+        self.level = level
+        self.level_matrix = level_list[level-1]                
+        # build the pixel version of the level matrix
+        n = np.shape(self.level_matrix)[0]
         
-    def structure(self,):
-        """
-        This function is used to build structures.
-        This should only be used once as an initialisation function.
-        """
-        pass
+        blockx = int(self.graph_h/n)
+        blocky = int(self.graph_v/n)
         
-    def update_material(self):
+        self.matpix = np.zeros((self.graph_h, self.graph_v, 3), dtype=np.uint8)
+        self.matpix[:, :, 0] = bgcol[0]
+        self.matpix[:, :, 1] = bgcol[1]
+        self.matpix[:, :, 2] = bgcol[2]
+        for i in range(n):
+            for j in range(n):
+                iind = i*blockx
+                jind = j*blocky
+                if self.level_matrix[i,j] == 2:
+                    self.matpix[iind:iind+blockx, jind:jind+blocky, 0] = RED[0]
+                    self.matpix[iind:iind+blockx, jind:jind+blocky, 1] = RED[1]
+                    self.matpix[iind:iind+blockx, jind:jind+blocky, 2] = RED[2]
+                if self.level_matrix[i,j] == 1:
+                    self.matpix[iind:iind+blockx, jind:jind+blocky, 0] = ORANGE[0]
+                    self.matpix[iind:iind+blockx, jind:jind+blocky, 1] = ORANGE[1]
+                    self.matpix[iind:iind+blockx, jind:jind+blocky, 2] = ORANGE[2]
+                    
+    def draw_material(self):
         """
-        Updates the state of all of the gas and solid objects in ther materials class.
-        Solids that become gas particles are deleted from the solids list and put into
-        the gas list, with random values for velocity added too.
+        Draws the materials.
         """
-        pass
+        drawn_matpix = pg.surfarray.make_surface(self.matpix)
+        self.graphics.game.display.blit(drawn_matpix, (self.graph_x, self.graph_y))
 
