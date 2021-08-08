@@ -2,6 +2,7 @@
 # Author: Aravinthen Rajkumar
 
 import pygame as pg
+import random
 import numpy as np
 import math as m
 import time
@@ -17,6 +18,7 @@ YELLOW = (255, 255, 0)
 SILVER = (192,192,192)
 ORANGE = (255, 128, 0)
 RED = (255, 0, 0)
+
 
 #---------------------------------------------------------------------------------------------
 # LEVELS
@@ -202,7 +204,7 @@ class Laser:
                 index1 = int(game_pos[0] - self.graphics.materials.graph_x)
                 index2 = int(game_pos[1] - self.graphics.materials.graph_y)
                 
-                collision = self.graphics.materials.matpix[index1, index2] == np.array(ORANGE)
+                collision = self.graphics.materials.matpix[index1, index2][2] != 128
                 
                 if collision.all():
                     for i in range(-self.intensity,self.intensity):
@@ -341,30 +343,37 @@ class Materials:
         # build the pixel version of the level matrix
         n = np.shape(self.level_matrix)[0]
         
+        
         blockx = int(self.graph_h/n)
         blocky = int(self.graph_v/n)
+
         
         self.matpix = np.zeros((self.graph_h, self.graph_v, 3), dtype=np.uint8)
         self.matpix[:, :, 0] = bgcol[0]
         self.matpix[:, :, 1] = bgcol[1]
         self.matpix[:, :, 2] = bgcol[2]
-        for i in range(n):
-            for j in range(n):
+        
+        for i in range(0,n):
+            for j in range(0,n):
                 iind = i*blockx
                 jind = j*blocky
                 if self.level_matrix[i,j] == 2:
-                    self.matpix[iind:iind+blockx, jind:jind+blocky, 0] = RED[0]
-                    self.matpix[iind:iind+blockx, jind:jind+blocky, 1] = RED[1]
-                    self.matpix[iind:iind+blockx, jind:jind+blocky, 2] = RED[2]
+                    for graphi in range(0, blockx):
+                        for graphj in range(0, blocky):
+                            self.matpix[iind+graphi, jind+graphj, 0] = RED[0] - random.randrange(50)
+                            self.matpix[iind+graphi, jind+graphj, 1] = RED[1]
+                            self.matpix[iind+graphi, jind+graphj, 2] = RED[2]
                 if self.level_matrix[i,j] == 1:
-                    self.matpix[iind:iind+blockx, jind:jind+blocky, 0] = ORANGE[0]
-                    self.matpix[iind:iind+blockx, jind:jind+blocky, 1] = ORANGE[1]
-                    self.matpix[iind:iind+blockx, jind:jind+blocky, 2] = ORANGE[2]
+                    for graphi in range(0, blockx):
+                        for graphj in range(0, blocky):
+                            self.matpix[iind+graphi, jind+graphj, 0] = ORANGE[0] - random.randrange(50)
+                            self.matpix[iind+graphi, jind+graphj, 1] = ORANGE[1]
+                            self.matpix[iind+graphi, jind+graphj, 2] = ORANGE[2]
                     
     def draw_material(self):
         """
         Draws the materials.
         """
-        drawn_matpix = pg.surfarray.make_surface(self.matpix)
+        drawn_matpix = pg.surfarray.make_surface(self.matpix)        
         self.graphics.game.display.blit(drawn_matpix, (self.graph_x, self.graph_y))
 

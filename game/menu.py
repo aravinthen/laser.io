@@ -24,6 +24,7 @@ GREEN = (128, 255, 0)
 YELLOW = (255, 255, 0)
 ORANGE = (255, 128, 0)
 RED = (255, 0, 0)
+NEONGREEN = (57, 255, 20)
 
 class Menu:
     """
@@ -221,6 +222,16 @@ class Menu:
                     ((self.lvl1_pos[1]-self.minor_height//2 < my) and (my < self.lvl1_pos[1]+self.minor_height//2))
                ):
                 self.active_lvl1 = 1
+                pg.draw.rect(self.game.display, BLUE, self.slide_coords)
+
+                lvl1font = pygame.font.Font('freesansbold.ttf', 30) # font
+                lvl1 = lvl1font.render('LEVEL 1', True, WHITE, BLUE)                
+                lvl1Rect = lvl1.get_rect()
+                lvl1Rect.width = self.major_width
+                lvl1Rect.height = self.major_height
+                lvl1Rect.center = self.lvl1_pos
+                self.game.display.blit(lvl1, lvl1Rect)            
+                
                 self.game.graphics.materials.init_level(1, bgcol=BLUE)
                 self.game.graphics.materials.draw_material()
 
@@ -240,7 +251,17 @@ class Menu:
                     ((self.lvl2_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl2_pos[0]+self.minor_width//2)) and
                     ((self.lvl2_pos[1]-self.minor_height//2 < my) and (my < self.lvl2_pos[1]+self.minor_height//2))
                ):
-                self.active_lvl2 = 1
+                self.active_lvl2 = 1            
+                pg.draw.rect(self.game.display, LGRAY, self.slide_coords)
+                
+                lvl2font = pygame.font.Font('freesansbold.ttf', 30) # font
+                lvl2 = lvl2font.render('LEVEL 2', True, WHITE, LGRAY)                
+                lvl2Rect = lvl2.get_rect()
+                lvl2Rect.width = self.major_width
+                lvl2Rect.height = self.major_height
+                lvl2Rect.center = self.lvl2_pos
+                self.game.display.blit(lvl2, lvl2Rect)            
+                
                 self.game.graphics.materials.init_level(2, bgcol=LGRAY)
                 self.game.graphics.materials.draw_material()
 
@@ -261,6 +282,16 @@ class Menu:
                     ((self.lvl3_pos[1]-self.minor_height//2 < my) and (my < self.lvl3_pos[1]+self.minor_height//2))
                ):
                 self.active_lvl3 = 1
+                pg.draw.rect(self.game.display, GRAY, self.slide_coords)
+
+                lvl3font = pygame.font.Font('freesansbold.ttf', 30) # font
+                lvl3 = lvl3font.render('LEVEL 3', True, WHITE, GRAY)                
+                lvl3Rect = lvl3.get_rect()
+                lvl3Rect.width = self.major_width
+                lvl3Rect.height = self.major_height
+                lvl3Rect.center = self.lvl3_pos
+                self.game.display.blit(lvl3, lvl3Rect)            
+                
                 self.game.graphics.materials.init_level(3, bgcol=GRAY)
                 self.game.graphics.materials.draw_material()
 
@@ -281,6 +312,16 @@ class Menu:
                     ((self.lvl4_pos[1]-self.minor_height//2 < my) and (my < self.lvl4_pos[1]+self.minor_height//2))
                ):
                 self.active_lvl4 = 1
+                pg.draw.rect(self.game.display, STEEL, self.slide_coords)
+
+                lvl4font = pygame.font.Font('freesansbold.ttf', 30) # font
+                lvl4 = lvl4font.render('LEVEL 4', True, WHITE, STEEL)                
+                lvl4Rect = lvl4.get_rect()
+                lvl4Rect.width = self.major_width
+                lvl4Rect.height = self.major_height
+                lvl4Rect.center = self.lvl4_pos
+                self.game.display.blit(lvl4, lvl4Rect)
+                
                 self.game.graphics.materials.init_level(4, bgcol=STEEL)
                 self.game.graphics.materials.draw_material()
                 
@@ -299,6 +340,16 @@ class Menu:
                     ((self.lvl5_pos[1]-self.minor_height//2 < my) and (my < self.lvl5_pos[1]+self.minor_height//2))
                ):
                 self.active_lvl5 = 1
+                pg.draw.rect(self.game.display, IRON, self.slide_coords)
+
+                lvl5font = pygame.font.Font('freesansbold.ttf', 30) # font
+                lvl5 = lvl5font.render('LEVEL 5', True, WHITE, IRON)                
+                lvl5Rect = lvl5.get_rect()
+                lvl5Rect.width = self.major_width
+                lvl5Rect.height = self.major_height
+                lvl5Rect.center = self.lvl5_pos
+                self.game.display.blit(lvl5, lvl5Rect)
+                
                 self.game.graphics.materials.init_level(5, bgcol=IRON)
                 self.game.graphics.materials.draw_material()
                 
@@ -448,9 +499,9 @@ class Menu:
             # The PLAY button
             playfont = pygame.font.Font('freesansbold.ttf', 30) # font
             if self.active_play == 1:
-                play = playfont.render('PLAY', True, WHITE, BLUE)
+                play = playfont.render('> PLAY', True, NEONGREEN, BLACK)
             else:
-                play = playfont.render('PLAY', True, WHITE, LBLUE)
+                play = playfont.render('PLAY', True, WHITE, BLACK)
             playRect = title.get_rect()
             playRect.width = self.major_width
             playRect.height = self.major_height
@@ -460,9 +511,9 @@ class Menu:
             
             # The instructions button
             if self.active_inst == 1:
-                instruct = buttonfont.render('Instructions', True, WHITE, BLUE)
+                instruct = buttonfont.render('> Instructions', True, NEONGREEN, BLACK)
             else:
-                instruct = buttonfont.render('Instructions', True, WHITE, LBLUE)
+                instruct = buttonfont.render('Instructions', True, WHITE, BLACK)
             instructRect = title.get_rect()
             instructRect.width = self.minor_width
             instructRect.height = self.minor_height
@@ -470,9 +521,9 @@ class Menu:
             
             # The highscores button
             if self.active_high == 1:
-                high = buttonfont.render('High Scores', True, WHITE, BLUE)
+                high = buttonfont.render('> High Scores', True, NEONGREEN, BLACK)
             else:
-                high = buttonfont.render('High Scores', True, WHITE, LBLUE)                
+                high = buttonfont.render('High Scores', True, WHITE, BLACK)                
             highRect = high.get_rect()
             highRect.width = self.minor_width
             highRect.height = self.minor_height
@@ -480,9 +531,9 @@ class Menu:
             
             # The credits button
             if self.active_cred == 1:
-                cred = buttonfont.render('Credits', True, WHITE, BLUE)
+                cred = buttonfont.render('> Credits', True, NEONGREEN, BLACK)
             else:
-                cred = buttonfont.render('Credits', True, WHITE, LBLUE)                
+                cred = buttonfont.render('Credits', True, WHITE, BLACK)                
             credRect = cred.get_rect()
             credRect.width = self.minor_width
             credRect.height = self.minor_height
@@ -501,24 +552,13 @@ class Menu:
         # Draw the level select screen.
         if self.menumode == "level":
             self.game.display.fill(BLACK)
-            # level information slides:
-            if self.active_lvl1 == 1:
-                pg.draw.rect(self.game.display, BLUE, self.slide_coords)
-            if self.active_lvl2 == 1:
-                pg.draw.rect(self.game.display, LGRAY, self.slide_coords)
-            if self.active_lvl3 == 1:
-                pg.draw.rect(self.game.display, GRAY, self.slide_coords)
-            if self.active_lvl4 == 1:
-                pg.draw.rect(self.game.display, STEEL, self.slide_coords)
-            if self.active_lvl5 == 1:
-                pg.draw.rect(self.game.display, IRON, self.slide_coords)
             
             # the BACK button
             lbackfont = pygame.font.Font('freesansbold.ttf', 30) # font
             if self.active_lback == 1:
-                lback = lbackfont.render('BACK', True, WHITE, BLUE)
+                lback = lbackfont.render('> BACK', True, NEONGREEN, BLACK)
             else:
-                lback = lbackfont.render('BACK', True, WHITE, LBLUE)
+                lback = lbackfont.render('BACK', True, WHITE, BLACK)
                 
             lbackRect = lback.get_rect()
             lbackRect.width = self.major_width
@@ -528,10 +568,7 @@ class Menu:
             # the LEVEL buttons
             # Lvl1
             lvl1font = pygame.font.Font('freesansbold.ttf', 30) # font
-            if self.active_lvl1 == 1:
-                lvl1 = lvl1font.render('LEVEL 1', True, WHITE, BLUE)
-            else:
-                lvl1 = lvl1font.render('LEVEL 1', True, WHITE, LBLUE)                
+            lvl1 = lvl1font.render('LEVEL 1', True, WHITE, BLACK)                
             lvl1Rect = lvl1.get_rect()
             lvl1Rect.width = self.major_width
             lvl1Rect.height = self.major_height
@@ -539,10 +576,7 @@ class Menu:
 
             # Lvl2
             lvl2font = pygame.font.Font('freesansbold.ttf', 30) # font
-            if self.active_lvl2 == 1:
-                lvl2 = lvl2font.render('LEVEL 2', True, WHITE, BLUE)
-            else:
-                lvl2 = lbackfont.render('LEVEL 2', True, WHITE, LBLUE)                
+            lvl2 = lbackfont.render('LEVEL 2', True, WHITE, BLACK)                
             lvl2Rect = lvl2.get_rect()
             lvl2Rect.width = self.major_width
             lvl2Rect.height = self.major_height
@@ -550,10 +584,7 @@ class Menu:
 
             # Lvl3
             lvl3font = pygame.font.Font('freesansbold.ttf', 30) # font
-            if self.active_lvl3 == 1:
-                lvl3 = lvl3font.render('LEVEL 3', True, WHITE, BLUE)
-            else:
-                lvl3 = lvl3font.render('LEVEL 3', True, WHITE, LBLUE)                
+            lvl3 = lvl3font.render('LEVEL 3', True, WHITE, BLACK)                
             lvl3Rect = lvl3.get_rect()
             lvl3Rect.width = self.major_width
             lvl3Rect.height = self.major_height
@@ -561,10 +592,7 @@ class Menu:
 
             # Lvl4
             lvl4font = pygame.font.Font('freesansbold.ttf', 30) # font
-            if self.active_lvl4 == 1:
-                lvl4 = lvl4font.render('LEVEL 4', True, WHITE, BLUE)
-            else:
-                lvl4 = lvl4font.render('LEVEL 4', True, WHITE, LBLUE)                
+            lvl4 = lvl4font.render('LEVEL 4', True, WHITE, BLACK)                
             lvl4Rect = lvl4.get_rect()
             lvl4Rect.width = self.major_width
             lvl4Rect.height = self.major_height
@@ -572,10 +600,7 @@ class Menu:
 
             # Lvl5
             lvl5font = pygame.font.Font('freesansbold.ttf', 30) # font
-            if self.active_lvl5 == 1:
-                lvl5 = lvl5font.render('LEVEL 5', True, WHITE, BLUE)                              
-            else:
-                lvl5 = lvl5font.render('LEVEL 5', True, WHITE, LBLUE)                
+            lvl5 = lvl5font.render('LEVEL 5', True, WHITE, BLACK)                
             lvl5Rect = lvl5.get_rect()
             lvl5Rect.width = self.major_width
             lvl5Rect.height = self.major_height
