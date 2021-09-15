@@ -108,12 +108,7 @@ class Menu:
         self.lvl5_pos = ((0.10)*self.game.sx, (0.90)*self.game.sy)
         
         # INSTRUCTION DATA ------------------------------------------------------------------------
-        self.num_pages = 3 # The number of instruction pages.b
-                           # Starts at 1, no zero-based numbering
-                           # You have to update this variable if you add more pages!
                            
-        self.inst_page = 1 # This controls the page display for the instruction slide.
-                           # It has to be set to zero whenever instructions are exited
         # BUTTONS ---------------------------------------------------------------------------------                           
         # Next page
         self.active_inext = 0
@@ -131,6 +126,8 @@ class Menu:
         # Back button
         self.active_hback = 0
         self.hback_pos = ((0.90)*self.game.sx, (0.90)*self.game.sy)
+
+        self.active_highscore = ".highscores/.lvl1"
         
         # CREDIT DATA -----------------------------------------------------------------------------
         # c prefix: the back value reserved for the credits submode
@@ -389,7 +386,7 @@ class Menu:
                     self.game.graphics.materials.init_level(5)
                     self.game.mode = 'interface'
 
-            # -----------------------------------     LEVELS   --------------------------------------------------
+            # -----------------------------------     LEVELS   --------------------------------------------------            
 
         if self.menumode == 'instructions':
             # the back button
@@ -450,6 +447,9 @@ class Menu:
                     self.menumode = 'default'
                     time.sleep(self.sleep_time)
 
+                    
+        #--------------------------------------------------------------------------------
+        # HIGH SCORES
         if self.menumode == 'highscore':
             if (
                     ((self.hback_pos[0]-self.minor_width//2 < mx) and (mx < self.hback_pos[0]+self.minor_width//2)) and
@@ -459,6 +459,58 @@ class Menu:
             else:
                 self.active_hback = 0
 
+
+            # Level 1
+            if (
+                    ((self.lvl1_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl1_pos[0]+self.minor_width//2)) and
+                    ((self.lvl1_pos[1]-self.minor_height//2 < my) and (my < self.lvl1_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl1 = 1
+                self.active_highscore = ".highscores/.lvl1"
+            else:
+                self.active_lvl1 = 0
+
+
+            # Level 2
+            if (
+                    ((self.lvl2_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl2_pos[0]+self.minor_width//2)) and
+                    ((self.lvl2_pos[1]-self.minor_height//2 < my) and (my < self.lvl2_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl2 = 1
+                self.active_highscore = ".highscores/.lvl2"
+            else:
+                self.active_lvl2 = 0
+
+            # Level 3
+            if (
+                    ((self.lvl3_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl3_pos[0]+self.minor_width//2)) and
+                    ((self.lvl3_pos[1]-self.minor_height//2 < my) and (my < self.lvl3_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl3 = 1
+                self.active_highscore = ".highscores/.lvl3"
+            else:
+                self.active_lvl3 = 0
+
+            # Level 4
+            if (
+                    ((self.lvl4_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl4_pos[0]+self.minor_width//2)) and
+                    ((self.lvl4_pos[1]-self.minor_height//2 < my) and (my < self.lvl4_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl4 = 1
+                self.active_highscore = ".highscores/.lvl4"
+            else:
+                self.active_lvl4 = 0
+
+            # Level 5
+            if (
+                    ((self.lvl5_pos[0]-self.minor_width//2 < mx) and (mx < self.lvl5_pos[0]+self.minor_width//2)) and
+                    ((self.lvl5_pos[1]-self.minor_height//2 < my) and (my < self.lvl5_pos[1]+self.minor_height//2))
+               ):
+                self.active_lvl5 = 1
+                self.active_highscore = ".highscores/.lvl5"
+            else:
+                self.active_lvl5 = 0
+                
                 
             if click[0] == 1:
                 if self.active_hback == 1:
@@ -621,57 +673,48 @@ class Menu:
             #------------------------------------------------------------------------------------------
             # TUTORIAL TEXT
             # NOTE: If you add a new page, MAKE SURE TO CHANGE THE self.num_pages variable to account for it!
-            if self.inst_page == 1:
-                pass
-            if self.inst_page == 2:
-                pass
-            if self.inst_page == 3:
-                pass
-            #------------------------------------------------------------------------------------------
+            titlefont = pygame.font.Font('freesansbold.ttf', 30) # font
+            title = titlefont.render('INSTRUCTIONS                                                       ', True, BLACK, WHITE)
+            titleRect = title.get_rect()
+            titleRect.width = 100
+            titleRect.height = 30
+            titleRect.center = ((0.15)*self.game.sx, (0.10)*self.game.sy)
+            self.game.display.blit(title, titleRect)
+            
+            instructions_text = ["In this game, you are in charge of programming a laser. The laser  ",
+                                 "is powerful enough to convert solid to gas: this is called laser   ",
+                                 "ablation.                                                          ",
+                                 "You can control the laser with a special programming language      ",
+                                 "that allows you to shift, rotate and control the intensity of the  ",
+                                 "laser. You can also program FOR loops to write complex programs    ",
+                                 "with ease.                                                         ",
+                                 "Starting from the initial shape, use your laser to reach the goal  ",
+                                 "shape in the easiest way possible. Don't cut off more than you have",
+                                 "to! Precision is key. :)"]
+
+            for i in range(len(instructions_text)):
+                instructionsfont = pygame.font.Font('freesansbold.ttf', 19) # font
+                instructions = instructionsfont.render(instructions_text[i], True, WHITE, None)
+                instructionsRect = instructions.get_rect()
+                instructionsRect.width = 50
+                instructionsRect.height = 30
+                instructionsRect.center = (0.16*self.game.sx, (0.2+0.05*i)*self.game.sy)
+            
+                self.game.display.blit(instructions, instructionsRect)
+
+            
             # BUTTONS            
             # the BACK button
             ibackfont = pygame.font.Font('freesansbold.ttf', 30) # font
             if self.active_iback == 1:
-                iback = ibackfont.render('BACK', True, WHITE, BLUE)
+                iback = ibackfont.render('> BACK', True, NEONGREEN, BLACK)
             else:
-                iback = ibackfont.render('BACK', True, WHITE, LBLUE)
+                iback = ibackfont.render('BACK', True, NEONGREEN, BLACK)
                 
             ibackRect = iback.get_rect()
             ibackRect.width = self.major_width
             ibackRect.height = self.major_height
             ibackRect.center = self.iback_pos
-
-            # the NEXT button
-            if self.inst_page < self.num_pages:
-                inextfont = pygame.font.Font('freesansbold.ttf', 30) # font
-                if self.active_inext == 1:
-                    inext = inextfont.render('NEXT', True, WHITE, BLUE)
-                else:
-                    inext = inextfont.render('NEXT', True, WHITE, LBLUE)
-                
-                inextRect = inext.get_rect()
-                inextRect.width = self.major_width
-                inextRect.height = self.major_height
-                inextRect.center = self.inext_pos
-
-                # need to draw this separately, as it's dependent on self.inst_page 
-                self.game.display.blit(inext, inextRect)            
-
-            # the PREV button
-            if self.inst_page > 1:
-                iprevfont = pygame.font.Font('freesansbold.ttf', 30) # font                
-                if self.active_iprev == 1:
-                    iprev = iprevfont.render('PREVIOUS', True, WHITE, BLUE)
-                else:
-                    iprev = iprevfont.render('PREVIOUS', True, WHITE, LBLUE)
-                
-                iprevRect = iprev.get_rect()
-                iprevRect.width = self.major_width
-                iprevRect.height = self.major_height
-                iprevRect.center = self.iprev_pos
-                
-                # need to draw this separately, as it's dependent on self.inst_page    
-                self.game.display.blit(iprev, iprevRect) 
                 
             # Drawing
             self.game.display.blit(iback, ibackRect)
@@ -684,14 +727,109 @@ class Menu:
             # the BACK button
             hbackfont = pygame.font.Font('freesansbold.ttf', 30) # font
             if self.active_hback == 1:
-                hback = hbackfont.render('BACK', True, WHITE, BLUE)
-            else:
-                hback = hbackfont.render('BACK', True, WHITE, LBLUE)
+                hback = hbackfont.render('> BACK', True, NEONGREEN, BLACK)
+            else: 
+                hback = hbackfont.render('BACK', True, NEONGREEN, BLACK)
                 
             hbackRect = hback.get_rect()
             hbackRect.width = self.major_width
             hbackRect.height = self.major_height
             hbackRect.center = self.hback_pos
+
+            titlefont = pygame.font.Font('freesansbold.ttf', 19) # font
+            title = titlefont.render(f'HIGH SCORES', True, WHITE, None)
+            titleRect = title.get_rect()
+            titleRect.width = 50
+            titleRect.height = 30
+            titleRect.center = (0.45*self.game.sx, (0.10)*self.game.sy)
+            
+            self.game.display.blit(title, titleRect)
+
+                        # the LEVEL buttons
+            # Lvl1
+            lvl1font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl1 == 0:
+                lvl1 = lvl1font.render('LEVEL 1', True, NEONGREEN, BLACK)
+            else:
+                lvl1 = lvl1font.render('> LEVEL 1', True, NEONGREEN, BLACK)
+            lvl1Rect = lvl1.get_rect()
+            lvl1Rect.width = self.major_width
+            lvl1Rect.height = self.major_height
+            lvl1Rect.center = self.lvl1_pos
+
+            # Lvl2
+            lvl2font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl2 == 0:
+                lvl2 = lvl1font.render('LEVEL 2', True, NEONGREEN, BLACK)
+            else:
+                lvl2 = lvl1font.render('> LEVEL 2', True, NEONGREEN, BLACK)
+            lvl2Rect = lvl2.get_rect()
+            lvl2Rect.width = self.major_width
+            lvl2Rect.height = self.major_height
+            lvl2Rect.center = self.lvl2_pos
+
+            # Lvl3
+            lvl3font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl3 == 0:
+                lvl3 = lvl3font.render('LEVEL 3', True, NEONGREEN, BLACK)
+            else:
+                lvl3 = lvl3font.render('> LEVEL 3', True, NEONGREEN, BLACK)
+                
+            lvl3Rect = lvl3.get_rect()
+            lvl3Rect.width = self.major_width
+            lvl3Rect.height = self.major_height
+            lvl3Rect.center = self.lvl3_pos
+
+            # Lvl4
+            lvl4font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl4 == 0:
+                lvl4 = lvl4font.render('LEVEL 4', True, NEONGREEN, BLACK)
+            else:
+                lvl4 = lvl4font.render('> LEVEL 4', True, NEONGREEN, BLACK)
+                
+            lvl4Rect = lvl4.get_rect()
+            lvl4Rect.width = self.major_width
+            lvl4Rect.height = self.major_height
+            lvl4Rect.center = self.lvl4_pos
+
+            # Lvl5
+            lvl5font = pygame.font.Font('freesansbold.ttf', 30) # font
+            if self.active_lvl5 == 0:
+                lvl5 = lvl5font.render('LEVEL 5', True, NEONGREEN, BLACK)
+            else:
+                lvl5 = lvl5font.render('> LEVEL 5', True, NEONGREEN, BLACK)
+            lvl5Rect = lvl5.get_rect()
+            lvl5Rect.width = self.major_width
+            lvl5Rect.height = self.major_height
+            lvl5Rect.center = self.lvl5_pos
+            
+            # drawing buttons
+            self.game.display.blit(lvl1, lvl1Rect)
+            self.game.display.blit(lvl2, lvl2Rect)
+            self.game.display.blit(lvl3, lvl3Rect)
+            self.game.display.blit(lvl4, lvl4Rect)
+            self.game.display.blit(lvl5, lvl5Rect)
+
+                        
+            with open(self.active_highscore, "r") as f:
+                scores = []
+                for line in f:
+                    entry = line.strip().split("\t")
+                    scores.append([entry[0], float(entry[1])])
+
+                scores = sorted(scores, key=lambda x:x[1], reverse=True)
+
+                for i in range(len(scores)):
+                    scorestring = scores[i]
+                    scorefont = pygame.font.Font('freesansbold.ttf', 19) # font
+                    score = scorefont.render(f'{scorestring[0]}                                           {scorestring[1]}', True, WHITE, None)
+                    scoreRect = score.get_rect()
+                    scoreRect.width = 50
+                    scoreRect.height = 30
+                    scoreRect.center = ((0.35)*self.game.sx, (0.20)*self.game.sy+i*30)
+                    
+                    self.game.display.blit(score, scoreRect)
+                    
 
             self.game.display.blit(hback, hbackRect)
 

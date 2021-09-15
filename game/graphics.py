@@ -6,6 +6,7 @@ import pygame.freetype
 from pygame.sprite import Sprite
 from pygame.rect import Rect
 import time
+from datetime import date
 import numpy as np
 
 import math as m
@@ -53,8 +54,8 @@ class Graphics:
         # Auxillary utilities
         # -----------------------------------------------------------------------------------------
         self.score_displayed = False
-        self.score_window = (self.game.sx*(1/2-0.1), (0.10)*self.game.sy)
-        self.score_size = (0.1*self.reference, 0.1*self.reference)
+        self.score_window = (0.31*self.game.sx, 0.30*self.game.sy)
+        self.score_size = (0.56*self.reference, 0.45*self.reference)
         self.score = 0
         
         
@@ -147,22 +148,93 @@ class Graphics:
 
     def game_finished(self,):        
         # displays score if finished.
-        if self.score_displayed == True:
-            
+
+        
+        if self.score_displayed == True:            
             pg.draw.rect(self.game.display,
-                         WHITE,
+                         BLACK,
                          (self.score_window[0],
                           self.score_window[1],
                           self.score_size[0],
                           self.score_size[1]),
                          0)
+
+            pg.draw.rect(self.game.display,
+                         GREEN,
+                         (self.score_window[0],
+                          self.score_window[1],
+                          self.score_size[0],
+                          self.score_size[1]),
+                         2)
             
             scorefont = pygame.font.Font('freesansbold.ttf', 19) # font
-            score = scorefont.render(f'Score: {self.score}', True, DBLUE, WHITE)
+            score = scorefont.render(f'Score: {self.score}', True, GREEN, BLACK)
             scoreRect = score.get_rect()
             scoreRect.width = 50
             scoreRect.height = 30
-            scoreRect.center = self.score_window
+            scoreRect.center = (0.46*self.game.sx, 0.40*self.game.sy)
+
+            def command_button(string, pos, h, v, mx, my, game, font=20):                
+                buttonfont = pygame.font.Font('freesansbold.ttf', 18) # font
+                if (mx > pos[0] and mx < pos[0]+h) and (my > pos[1] and my < pos[1]+v):
+                    button = buttonfont.render(string, True, BLUE, None) 
+                else:
+                    button = buttonfont.render(string, True, WHITE, None)
+
+                buttonRect = button.get_rect()
+                buttonRect.width = h
+                buttonRect.height = v
+                buttonRect.center = (pos[0]+0.55*h, pos[1]+0.7*v)
+            
+                game.display.blit(button, buttonRect)
+
+            def hoverclick(pos, h, v):
+                click = pg.mouse.get_pressed()
+                mx, my = pg.mouse.get_pos()
+                if (mx > pos[0] and mx < pos[0]+h) and (my > pos[1] and my < pos[1]+v):
+                    if click[0] == 1:
+                        return True
+
+            mx, my = pg.mouse.get_pos()            
+            h = 0.1*self.game.sx
+            v = 0.04*self.game.sx
+            subpos = (0.46*self.game.sx, 0.50*self.game.sy)
+            retpos = (0.46*self.game.sx, 0.57*self.game.sy)
+
+            command_button("Submit", subpos, h, v, mx, my, self.game)
+            command_button("Levels", retpos, h, v, mx, my, self.game)            
+
+            # return to menu
+            if hoverclick(retpos, h, v) == True:
+                self.game.mode = "menu"
+                
+                self.laser.reset()
+                self.game.interface.reset()
+
+                self.laser.finished = False
+                self.score_displayed = False
+                self.score = 0
+                
+                time.sleep(3*self.sleep_time)   
+                
+            if hoverclick(subpos, h, v) == True:
+                file_open = f".highscores/.lvl{self.materials.level}"
+                print(file_open)
+
+                with open(file_open, 'a') as f:
+                    datestr = date.today().strftime("%d/%m/%y")
+                    f.write(f"{datestr}\t{self.score}\n")                
+                
+                self.game.mode = "menu"
+                
+                self.laser.reset()
+                self.game.interface.reset()
+
+                self.laser.finished = False
+                self.score_displayed = False
+                self.score = 0
+                
+                time.sleep(3*self.sleep_time)
 
             self.game.display.blit(score, scoreRect)
             
