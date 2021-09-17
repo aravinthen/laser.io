@@ -223,7 +223,7 @@ class Graphics:
 
                 with open(file_open, 'a') as f:
                     datestr = date.today().strftime("%d/%m/%y")
-                    f.write(f"{datestr}\t{self.score}\n")                
+                    f.write(f"\n{datestr}\t{self.score}")                
                 
                 self.game.mode = "menu"
                 
